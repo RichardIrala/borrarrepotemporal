@@ -1,7 +1,5 @@
 import * as express from "express";
-import * as cors from "cors";
 import * as path from "path";
-import { nanoid } from "nanoid";
 
 const app = express();
 app.use(express.json());
