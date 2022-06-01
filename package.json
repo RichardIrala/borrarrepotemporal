@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@types/node": "^17.0.38",
+    "@vaadin/router": "^1.7.4",
     "cross-env": "^7.0.3",
     "express": "4.17.1",
     "path": "^0.12.7",
