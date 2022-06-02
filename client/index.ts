@@ -1,2 +1,11 @@
-import "./components";
+import "./components/buttons";
+import "./components/hands";
+import "./components/text";
+import "./pages/welcome";
+import "./pages/enter-name-id";
+import "./pages/share-id";
+import "./pages/waiting-player";
+import "./pages/game-instructions";
+import "./pages/game";
+import "./pages/show-results";
 import "./router";
