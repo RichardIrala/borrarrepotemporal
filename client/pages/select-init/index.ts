@@ -1,6 +1,6 @@
 import { Router } from "@vaadin/router";
 
-class Home extends HTMLElement {
+class Select extends HTMLElement {
   shadow: ShadowRoot;
   constructor() {
     super();
@@ -38,7 +38,7 @@ class Home extends HTMLElement {
     const newGame = this.shadow.querySelector("#newGame");
     newGame.addEventListener("click", e => {
       e.preventDefault();
-      Router.go("/signup");
+      Router.go("/share_id");
     });
     const enterRoom = this.shadow.querySelector("#enterRoom");
     enterRoom.addEventListener("click", e => {
@@ -70,4 +70,4 @@ class Home extends HTMLElement {
     this.addListeners();
   }
 }
-customElements.define("home-page", Home);
+customElements.define("select-page", Select);

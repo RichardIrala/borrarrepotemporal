@@ -1,4 +1,10 @@
 import { Router } from "@vaadin/router";
 
 const router = new Router(document.querySelector(".root"));
-router.setRoutes([{ path: "/", component: "home-page" }]);
+router.setRoutes([
+  { path: "/", component: "signup-page" },
+  { path: "/select", component: "select-page" },
+  { path: "/enter_room", component: "enterid-page" },
+  { path: "/share_id", component: "shareid-page" },
+  { path: "/instructions", component: "instructions-page" },
+]);
