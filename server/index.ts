@@ -1,14 +1,185 @@
 import * as express from "express";
 import * as path from "path";
+import * as cors from "cors";
+import { firestore, rtdb } from "./db";
+import { nanoid } from "nanoid";
 
+// INIT APP AND CFG
 const app = express();
-app.use(express.json());
-
 const port = process.env.PORT || 3000;
-console.log(port);
+app.use(express.json());
+app.use(cors());
 
-app.get("/test", (req, res) => {
-  res.send("ok");
+app.get("/env", (req, res) => {
+  res.json({
+    environment: process.env.NODE_ENV,
+  });
+});
+
+// COLL REFS
+const userColl = firestore.collection("users");
+const roomsColl = firestore.collection("rooms");
+
+// CREAMOS EL USUARIO DEVOLVIENDO SU IDDOC
+app.post("/signup", (req, res) => {
+  const { name } = req.body;
+
+  userColl
+    .where("name", "==", name)
+    .get()
+    .then(snap => {
+      if (snap.empty) {
+        userColl
+          .add({
+            name: name,
+          })
+          .then(newUserDoc => {
+            res.status(201).json({
+              id: newUserDoc.id,
+              new: true,
+            });
+          });
+      } else {
+        res.status(200).json({
+          id: snap.docs[0].id,
+          message: "Email existente",
+        });
+      }
+    });
+});
+app.post("/auth/rooms", (req, res) => {
+  const { id } = req.body;
+
+  roomsColl
+    .doc(id.toString())
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        res.status(200).json({
+          id: doc.id,
+          message: "Sala encontrada.",
+        });
+      } else {
+        res.status(400).json({
+          message: `La sala ${id} no existe, por favor, ingrese un ID válido.`,
+        });
+      }
+    });
+});
+
+// CREATE ROOM
+// SETEAMOS COMO PROPIETARIO DE LA SALA EN LA RTDB: EL ID DEL USUARIO
+// Y EN LA ROOMSCOLL DE FIRESTORE: CREAMOS UN ID CORTO PARA EL DOCUMENTO
+// Y DENTRO DE ESE DOCUMENTO GUARDAMOS: EL ID LARGO DE LA RTDB
+// ESTO NOS VA A SERVIR PARA QUE LUEGO DESDE FIRESTORE AL OBTENER EL RTDBID QUE HAY DENTRO DE n SALA
+// CON ESE RTDBID OBTENDREMOS EL PROPIETARIO DE LA SALA EN LA RTDB, ES DECIR, EL USERID DE LA USERSCOLL EN FIRESTORE
+app.post("/rooms", (req, res) => {
+  const { userId, userName } = req.body;
+
+  userColl
+    .doc(userId.toString())
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        const roomRef = rtdb.ref("/rooms/" + nanoid());
+        roomRef
+          .set({
+            player1: {
+              userName,
+              ready: false,
+              moveChoise: "none",
+              start: false,
+              online: false,
+            },
+            player2: {
+              userName: false,
+              ready: false,
+              moveChoise: "none",
+              start: false,
+              online: false,
+            },
+          })
+          .then(() => {
+            const roomLongId = roomRef.key;
+            const roomId = 1000 + Math.floor(Math.random() * 999);
+            roomsColl
+              .doc(roomId.toString())
+              .set({ rtdbId: roomLongId, player1: userId })
+              .then(() => {
+                res.status(200).json({
+                  id: roomId,
+                });
+              });
+          });
+      } else {
+        res.status(401).json({
+          message: "El usuario no existe.",
+        });
+      }
+    });
+});
+app.get("/rooms/:roomId", (req, res) => {
+  const { roomId } = req.params;
+  const { userId } = req.query;
+
+  userColl
+    .doc(userId.toString())
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        roomsColl
+          .doc(roomId)
+          .get()
+          .then(snap => {
+            const data = snap.data();
+            res.status(200).json(data);
+          });
+      } else {
+        res.status(401).json({
+          message: "El usuario no existe.",
+        });
+      }
+    });
+});
+
+// LISTENING ROOM
+app.get("/rooms/data/:id", (req, res) => {
+  const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}`);
+  chatRoomRef.once("value", snap => {
+    res.status(200).json(snap.val());
+  });
+});
+
+// CHANGE THE PLAYER2 ID
+app.post("/rooms/userName/:id", (req, res) => {
+  const { name } = req.body;
+  const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/player2`);
+  chatRoomRef.update(
+    {
+      userName: name,
+    },
+    () => {
+      res.status(200).json({
+        message: `Player2 has changed the userName.${name}`,
+      });
+    }
+  );
+});
+
+// CHANGE THE START
+app.post("/rooms/start", (req, res) => {
+  const { userId, rtdbId, ready } = req.body;
+  const chatRoomRef = rtdb.ref(`/rooms/${rtdbId}/${userId}`);
+  chatRoomRef.update(
+    {
+      ready,
+    },
+    () => {
+      res.status(200).json({
+        message: `${userId} is ready.`,
+      });
+    }
+  );
 });
 
 const relativeRoute = path.resolve(__dirname, "../dist");

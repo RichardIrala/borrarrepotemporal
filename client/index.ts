@@ -12,3 +12,9 @@ import "./pages/game-instructions";
 import "./pages/game";
 import "./pages/show-results";
 import "./router";
+import { state } from "./state";
+
+(function () {
+  const cs = state.getState();
+  console.log(cs.rtdbData);
+})();
