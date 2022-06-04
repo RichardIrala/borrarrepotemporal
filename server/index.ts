@@ -4,6 +4,8 @@ import * as cors from "cors";
 import { firestore, rtdb } from "./db";
 import { nanoid } from "nanoid";
 
+//TODO: Guardar el score, nombre y jugada de cada player en firestore en la roomsColl
+
 // INIT APP AND CFG
 const app = express();
 const port = process.env.PORT || 3000;
@@ -86,14 +88,12 @@ app.post("/rooms", (req, res) => {
           .set({
             player1: {
               userName,
-              ready: false,
               moveChoise: "none",
               start: false,
-              online: false,
+              online: true,
             },
             player2: {
               userName: false,
-              ready: false,
               moveChoise: "none",
               start: false,
               online: false,
@@ -104,7 +104,7 @@ app.post("/rooms", (req, res) => {
             const roomId = 1000 + Math.floor(Math.random() * 999);
             roomsColl
               .doc(roomId.toString())
-              .set({ rtdbId: roomLongId, player1: userId })
+              .set({ rtdbId: roomLongId, player1: userName })
               .then(() => {
                 res.status(200).json({
                   id: roomId,
@@ -150,13 +150,14 @@ app.get("/rooms/data/:id", (req, res) => {
   });
 });
 
-// CHANGE THE PLAYER2 ID
-app.post("/rooms/userName/:id", (req, res) => {
+// CHANGE THE PLAYER2 NAME AND ONLINE STATUS
+app.put("/rooms/userName/:id", (req, res) => {
   const { name } = req.body;
   const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/player2`);
   chatRoomRef.update(
     {
       userName: name,
+      online: true,
     },
     () => {
       res.status(200).json({
@@ -167,16 +168,32 @@ app.post("/rooms/userName/:id", (req, res) => {
 });
 
 // CHANGE THE START
-app.post("/rooms/start", (req, res) => {
-  const { userId, rtdbId, ready } = req.body;
-  const chatRoomRef = rtdb.ref(`/rooms/${rtdbId}/${userId}`);
+app.put("/rooms/:id/player/start", (req, res) => {
+  const { player, start } = req.body;
+  const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/${player}`);
   chatRoomRef.update(
     {
-      ready,
+      start,
     },
     () => {
       res.status(200).json({
-        message: `${userId} is ready.`,
+        message: `${player} is start.`,
+      });
+    }
+  );
+});
+
+// CHANGE THE MOVECHOISE
+app.put("/rooms/:id/player/move", (req, res) => {
+  const { player, moveChoise } = req.body;
+  const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/${player}`);
+  chatRoomRef.update(
+    {
+      moveChoise,
+    },
+    () => {
+      res.status(200).json({
+        message: `${player} moveChoise: ${moveChoise}.`,
       });
     }
   );

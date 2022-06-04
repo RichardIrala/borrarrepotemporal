@@ -3,6 +3,8 @@ import { map } from "lodash";
 
 const API_BASE_URL = "localhost:3000";
 
+//TODO: Validar quien es la persona ganadora y sumar el punto en base a eso
+
 const state = {
   data: {
     name: null,
@@ -40,6 +42,22 @@ const state = {
     cs.rtdbRoomId = longId;
     this.setState(cs);
   },
+
+  checkPlayer() {
+    const cs = this.getState();
+    const player1 = cs.rtdbData.player1.userName;
+    const player2 = cs.rtdbData.player2.userName;
+    let player: string;
+
+    if (cs.name == player1) {
+      return (player = "player1");
+    }
+    if (cs.name == player2) {
+      return (player = "player2");
+    }
+    return player;
+  },
+
   // OBTENEMOS EL ID DEL USUARIO EN FIRESTORE,
   // PARA LUEGO CON ESE ID CREAR UNA ROOM EN LA RTDB,
   // Y CREAR UNA ROOM EN FIRESTORE GUARDANDO EL RTDBID
@@ -141,7 +159,7 @@ const state = {
   },
   listenRoom() {
     const cs = this.getState();
-    const chatRoomRef = rtdb.ref(`/rooms/${cs.rtdbRoomId}`);
+    const chatRoomRef = rtdb.ref(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}`);
 
     chatRoomRef.on("value", snapshot => {
       const currentState = this.getState();
@@ -150,10 +168,13 @@ const state = {
     });
   },
 
+  // CUANDO EL PLAYER INGRESE EL CODIGO DE UNA SALA
+  // SE CONVERTIRÁ EN PLAYER2.
+  // SETEO SU NOMBRE EN LA RTDB CON EL NOMBRE ACTUAL DEL STATE
   changePlayer2Name() {
     const cs = this.getState();
-    fetch(`/rooms/userName/${cs.rtdbRoomId}`, {
-      method: "post",
+    fetch(`${API_BASE_URL}/rooms/userName/${cs.rtdbRoomId}`, {
+      method: "put",
       headers: {
         "Content-Type": "application/json",
       },
@@ -167,41 +188,39 @@ const state = {
       });
   },
 
-  ready() {
+  start() {
     const cs = this.getState();
-    if (cs.userName)
-      fetch(`/rooms/userName/${cs.rtdbRoomId}`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cs.userId),
+    const player = this.checkPlayer();
+
+    fetch(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}/player/start`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ start: true, player }),
+    })
+      .then(data => {
+        return data.json();
       })
-        .then(data => {
-          return data.json();
-        })
-        .then(res => res);
+      .then(res => res);
   },
 
-  // pushMessages(message: string) {
-  //   const cs = this.getState();
-  //   fetch(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}`, {
-  //     method: "post",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       from: cs.name,
-  //       message: message,
-  //     }),
-  //   })
-  //     .then(res => {
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //       return data;
-  //     });
-  // },
+  changeMove(movePlayer) {
+    const cs = this.getState();
+    const player = this.checkPlayer();
+
+    fetch(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}/player/move`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ moveChoise: movePlayer, player }),
+    })
+      .then(data => {
+        return data.json();
+      })
+      .then(res => res);
+  },
 
   setState(newState) {
     this.data = newState;
