@@ -57,19 +57,25 @@ class ShareId extends HTMLElement {
     const cs = state.getState();
     state.suscribe(() => {
       if (cs.roomId) {
+        cs.roomId;
         this.render();
       }
     });
+    this.render();
   }
   render() {
     const div: HTMLElement = document.createElement("div");
-    div.classList.add("container");
     const cs = state.getState();
+    div.classList.add("container");
 
     div.innerHTML = `
       <div class="leyenda">
         <text-custom size="40px">Compartí el código:</text-custom>
-        <text-custom size="40px" weight="700">${cs.roomId}</text-custom>
+
+        <text-custom size="40px" weight="700">${
+          cs.roomId ? cs.roomId : "Esperando codigo..."
+        }</text-custom>
+
         <text-custom size="40px">Con tu contrincante y espera a que ingrese</text-custom>
       </div>
       

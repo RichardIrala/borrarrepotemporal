@@ -43,10 +43,17 @@ class EnterRoom extends HTMLElement {
       const inputId = this.shadow
         .querySelector(".input-form")
         .shadowRoot.querySelector("input").value;
+      console.log(cs.rtdbRoomId);
 
       if (inputId != "") {
-        state.changePlayer2Name();
-        state.createUser(Router.go("/instructions"), inputId);
+        state.createUser(() => {}, inputId);
+        state.suscribe(() => {
+          if (cs.rtdbRoomId) {
+            state.changeNamePlayer2(() => {
+              Router.go("/instructions");
+            });
+          }
+        });
       } else {
         alert("Debes ingresar un ID.");
       }

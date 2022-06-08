@@ -46,6 +46,7 @@ class Instructions extends HTMLElement {
       const player2 = cs.rtdbData.player2;
       const startPlayer2 = player2.start;
 
+      console.log("rtdbRoomId desde game instructions", cs.rtdbRoomId);
       console.log("entre al suscribe");
       console.log(startPlayer2);
 

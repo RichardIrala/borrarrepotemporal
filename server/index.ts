@@ -57,6 +57,8 @@ app.post("/auth/rooms", (req, res) => {
     .get()
     .then(doc => {
       if (doc.exists) {
+        console.log(doc.data);
+
         res.status(200).json({
           id: doc.id,
           message: "Sala encontrada.",
@@ -65,6 +67,23 @@ app.post("/auth/rooms", (req, res) => {
         res.status(400).json({
           message: `La sala ${id} no existe, por favor, ingrese un ID válido.`,
         });
+      }
+    });
+});
+app.put("/rooms/player2", (req, res) => {
+  const { id, player2 } = req.body;
+
+  roomsColl
+    .doc(id.toString())
+    .update("player2", player2)
+    .then(doc => {
+      if (doc.writeTime) {
+        res.status(200).json({
+          id: id,
+          message: `El nombre ${player2} se ha escrito correctamente`,
+        });
+      } else {
+        return `Ha ocurrido un error al actualizar el nombre.`;
       }
     });
 });

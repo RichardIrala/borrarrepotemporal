@@ -60,10 +60,10 @@ const state = {
     let player: string;
 
     if (cs.name == player1) {
-      return (player = "player1");
+      player = "player1";
     }
     if (cs.name == player2) {
-      return (player = "player2");
+      player = "player2";
     }
     return player;
   },
@@ -102,7 +102,9 @@ const state = {
           }
         });
     } else {
-      alert("Ups, algo malio sal.");
+      alert(
+        "Ups, algo malio sal. Vuelve a la pagina de inicio y recarga el sitio. Lo sentimos mucho :("
+      );
     }
   },
   createRoom(callback?) {
@@ -146,8 +148,30 @@ const state = {
       .then(res => {
         if (res.id) {
           cs.roomId = res.id;
+          this.addP2ToRooms(cs.roomId);
           return res;
         } else {
+          return res.message;
+        }
+      });
+  },
+  addP2ToRooms(roomIdInput) {
+    const cs = this.getState();
+    return fetch(`${API_BASE_URL}/rooms/player2`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: roomIdInput, player2: cs.name }),
+    })
+      .then(data => {
+        return data.json();
+      })
+      .then(res => {
+        if (res.id) {
+          return res.message;
+        } else {
+          alert(res.message);
           return res.message;
         }
       });
@@ -184,21 +208,24 @@ const state = {
   // SE CONVERTIRÁ EN PLAYER2.
   // SETEO SU NOMBRE EN LA RTDB CON EL NOMBRE ACTUAL DEL STATE
   // Y AUTOMATICAMENTE SE SETEA COMO ONLINE
-  changePlayer2Name() {
+  changeNamePlayer2(callback?) {
     const cs = this.getState();
-    fetch(`${API_BASE_URL}/rooms/user/${cs.rtdbRoomId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(cs.name),
-    })
-      .then(data => {
-        return data.json();
+    if (cs.name) {
+      fetch(`${API_BASE_URL}/rooms/user/${cs.rtdbRoomId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cs.name),
       })
-      .then(res => {
-        return res;
-      });
+        .then(data => {
+          return data.json();
+        })
+        .then(res => {
+          callback();
+          return res;
+        });
+    }
   },
 
   start() {
