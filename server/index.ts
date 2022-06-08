@@ -44,7 +44,7 @@ app.post("/signup", (req, res) => {
       } else {
         res.status(200).json({
           id: snap.docs[0].id,
-          message: "Email existente",
+          message: "Nombre existente",
         });
       }
     });
@@ -151,7 +151,7 @@ app.get("/rooms/data/:id", (req, res) => {
 });
 
 // CHANGE THE PLAYER2 NAME AND ONLINE STATUS
-app.put("/rooms/userName/:id", (req, res) => {
+app.put("/rooms/user/:id", (req, res) => {
   const { name } = req.body;
   const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/player2`);
   chatRoomRef.update(

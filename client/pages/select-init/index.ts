@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
 class Select extends HTMLElement {
   shadow: ShadowRoot;
@@ -37,12 +38,13 @@ class Select extends HTMLElement {
   addListeners() {
     const newGame = this.shadow.querySelector("#newGame");
     newGame.addEventListener("click", e => {
-      e.preventDefault();
-      Router.go("/share_id");
+      state.createUser(() => {
+        Router.go("/share_id");
+      });
     });
+
     const enterRoom = this.shadow.querySelector("#enterRoom");
     enterRoom.addEventListener("click", e => {
-      e.preventDefault();
       Router.go("/enter_room");
     });
   }

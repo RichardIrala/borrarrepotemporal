@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
 class Signup extends HTMLElement {
   shadow: ShadowRoot;
@@ -40,8 +41,17 @@ class Signup extends HTMLElement {
   }
   addListeners() {
     const startBtn = this.shadow.querySelector("#start");
+
+    const cs = state.getState();
+    console.log(cs.name);
     startBtn.addEventListener("click", e => {
-      e.preventDefault();
+      const inputId = this.shadow
+        .querySelector(".input-form")
+        .shadowRoot.querySelector("input").value;
+
+      state.setName(inputId);
+      const cs = state.getState();
+      console.log(cs.name);
       Router.go("/select");
     });
   }
@@ -56,7 +66,7 @@ class Signup extends HTMLElement {
       <text-custom size="80px" weight="700" color="#009048" lineHeight="1">Piedra Papel o Tijeras</text-custom>
 
       <form class="form">
-        <input-comp>Tu nombre</input-comp>
+        <input-comp class="input-form" type="text" placeholder="Tu nombre"></input-comp>
         <btn-comp id="start" mt="15px">Continuar</btn-comp>
       </form>
 

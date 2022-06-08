@@ -7,4 +7,5 @@ router.setRoutes([
   { path: "/enter_room", component: "enterid-page" },
   { path: "/share_id", component: "shareid-page" },
   { path: "/instructions", component: "instructions-page" },
+  { path: "/waiting", component: "waiting-page" },
 ]);

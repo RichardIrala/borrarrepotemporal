@@ -12,8 +12,11 @@ customElements.define(
     render() {
       const input = document.createElement("input");
       const style = document.createElement("style");
+      const type = this.getAttribute("type");
+      const placeholder = this.getAttribute("placeholder");
+      input.placeholder = placeholder;
+      input.type = type;
       input.className = "input-el";
-      input.placeholder = this.textContent;
 
       style.innerText = `
         .input-el {

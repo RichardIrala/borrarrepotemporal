@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
 class ShareId extends HTMLElement {
   shadow: ShadowRoot;
@@ -35,18 +36,40 @@ class ShareId extends HTMLElement {
     `;
     this.shadow.appendChild(style);
   }
-  addListeners() {}
+  addListeners() {
+    console.log("entre al listener");
+
+    const cs = state.getState();
+    state.suscribe(() => {
+      const player2 = cs.rtdbData.player2;
+      const onlinePlayer2 = player2.online;
+
+      console.log("entre al suscribe");
+      console.log(onlinePlayer2);
+
+      if (onlinePlayer2) {
+        Router.go("/instructions");
+      }
+    });
+  }
 
   connectedCallback() {
-    this.render();
+    const cs = state.getState();
+    state.suscribe(() => {
+      if (cs.roomId) {
+        this.render();
+      }
+    });
   }
   render() {
     const div: HTMLElement = document.createElement("div");
     div.classList.add("container");
+    const cs = state.getState();
+
     div.innerHTML = `
       <div class="leyenda">
         <text-custom size="40px">Compartí el código:</text-custom>
-        <text-custom size="40px" weight="700">77H23S</text-custom>
+        <text-custom size="40px" weight="700">${cs.roomId}</text-custom>
         <text-custom size="40px">Con tu contrincante y espera a que ingrese</text-custom>
       </div>
       
@@ -56,7 +79,9 @@ class ShareId extends HTMLElement {
         <hands-comp hand="scissors"></hands-comp>
       </div>
     `;
+
     this.shadow.appendChild(div);
+    this.addListeners();
   }
 }
 customElements.define("shareid-page", ShareId);

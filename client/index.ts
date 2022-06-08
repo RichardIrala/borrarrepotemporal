@@ -16,5 +16,4 @@ import { state } from "./state";
 
 (function () {
   const cs = state.getState();
-  console.log(cs.rtdbData);
 })();

@@ -17,15 +17,16 @@ customElements.define(
 
       style.innerHTML = `
         .btn{
-          width: 320px;
-          height: 87px;
+          width: 310px;
+          min-height: 87px;
+          height: max-content;
           background-color: #006CFC;
           color: #ffff;
           font-size: 40px;
           font-family: "Patrick Hand", sans-serif;
           border: 10px solid #001997;
           border-radius: 10px;
-          margin-top: ${mt};
+          margin: ${mt} auto;
         }
 
         .btn:hover {

@@ -1,7 +1,7 @@
 import { rtdb } from "./rtdb";
 import { map } from "lodash";
 
-const API_BASE_URL = "localhost:3000";
+const API_BASE_URL = "http://localhost:3000";
 
 //TODO: Validar quien es la persona ganadora y sumar el punto en base a eso
 
@@ -11,7 +11,11 @@ const state = {
     userId: null,
     roomId: null,
     rtdbRoomId: null,
-    rtdbData: null,
+    rtdbData: {
+      player2: {
+        online: false,
+      },
+    },
     history: {
       player1: 0,
       player2: 0,
@@ -21,6 +25,12 @@ const state = {
 
   getState() {
     return this.data;
+  },
+
+  setName(userName) {
+    const cs = this.getState();
+    cs.name = userName;
+    this.setState(cs);
   },
 
   setUserId(userId) {
@@ -63,9 +73,9 @@ const state = {
   // Y CREAR UNA ROOM EN FIRESTORE GUARDANDO EL RTDBID
   createUser(callback?, idRoomInput?) {
     const cs = this.getState();
-    if (cs.email) {
+    if (cs.name) {
       fetch(`${API_BASE_URL}/signup`, {
-        method: "post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -92,14 +102,16 @@ const state = {
           }
         });
     } else {
-      alert("Debes colocar un mail.");
+      alert("Ups, algo malio sal.");
     }
   },
   createRoom(callback?) {
+    console.log("entro al createRoom");
+
     const cs = this.getState();
     if (cs.userId) {
       fetch(`${API_BASE_URL}/rooms`, {
-        method: "post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -122,7 +134,7 @@ const state = {
     const cs = this.getState();
 
     return fetch(`${API_BASE_URL}/auth/rooms`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -171,10 +183,11 @@ const state = {
   // CUANDO EL PLAYER INGRESE EL CODIGO DE UNA SALA
   // SE CONVERTIRÁ EN PLAYER2.
   // SETEO SU NOMBRE EN LA RTDB CON EL NOMBRE ACTUAL DEL STATE
+  // Y AUTOMATICAMENTE SE SETEA COMO ONLINE
   changePlayer2Name() {
     const cs = this.getState();
-    fetch(`${API_BASE_URL}/rooms/userName/${cs.rtdbRoomId}`, {
-      method: "put",
+    fetch(`${API_BASE_URL}/rooms/user/${cs.rtdbRoomId}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -193,7 +206,7 @@ const state = {
     const player = this.checkPlayer();
 
     fetch(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}/player/start`, {
-      method: "put",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -210,7 +223,7 @@ const state = {
     const player = this.checkPlayer();
 
     fetch(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}/player/move`, {
-      method: "put",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -222,6 +235,20 @@ const state = {
       .then(res => res);
   },
 
+  // MOCKUPS
+  changeStatus() {
+    const cs = this.getState();
+    const player2 = cs.rtdbData.player2;
+    player2.online = true;
+    this.setState(cs);
+  },
+  changeStart() {
+    const cs = this.getState();
+    const player2 = cs.rtdbData.player2;
+    player2.start = true;
+    this.setState(cs);
+  },
+  // END MOCKUPS
   setState(newState) {
     this.data = newState;
     for (const cb of this.listeners) {

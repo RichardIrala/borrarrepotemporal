@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
 class Instructions extends HTMLElement {
   shadow: ShadowRoot;
@@ -35,7 +36,24 @@ class Instructions extends HTMLElement {
     `;
     this.shadow.appendChild(style);
   }
-  addListeners() {}
+  addListeners() {
+    console.log("entre al listener");
+    const startBtn = this.querySelector("#start");
+    console.log(startBtn);
+
+    const cs = state.getState();
+    state.suscribe(() => {
+      const player2 = cs.rtdbData.player2;
+      const startPlayer2 = player2.start;
+
+      console.log("entre al suscribe");
+      console.log(startPlayer2);
+
+      if (startPlayer2) {
+        Router.go("/waiting");
+      }
+    });
+  }
 
   connectedCallback() {
     this.render();
@@ -58,6 +76,7 @@ class Instructions extends HTMLElement {
       </div>
     `;
     this.shadow.appendChild(div);
+    this.addListeners();
   }
 }
 customElements.define("instructions-page", Instructions);

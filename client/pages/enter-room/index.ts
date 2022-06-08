@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
 class EnterRoom extends HTMLElement {
   shadow: ShadowRoot;
@@ -36,9 +37,20 @@ class EnterRoom extends HTMLElement {
   }
   addListeners() {
     const startBtn = this.shadow.querySelector("#start");
+
     startBtn.addEventListener("click", e => {
-      e.preventDefault();
-      Router.go("/instructions");
+      const cs = state.getState();
+      const inputId = this.shadow
+        .querySelector(".input-form")
+        .shadowRoot.querySelector("input").value;
+
+      if (inputId != "") {
+        state.changePlayer2Name();
+        state.createUser(Router.go("/instructions"), inputId);
+      } else {
+        alert("Debes ingresar un ID.");
+      }
+      console.log(cs.roomId);
     });
   }
 
@@ -52,7 +64,7 @@ class EnterRoom extends HTMLElement {
       <text-custom size="80px" weight="700" color="#009048" lineHeight="1">Piedra Papel o Tijeras</text-custom>
 
       <form class="form">
-        <input-comp>7723HS</input-comp>
+        <input-comp class="input-form" type="text" placeholder="1458" required="true"></input-comp>
         <btn-comp id="start" mt="15px">Continuar</btn-comp>
       </form>
 
