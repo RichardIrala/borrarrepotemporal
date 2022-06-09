@@ -11,11 +11,7 @@ const state = {
     userId: null,
     roomId: null,
     rtdbRoomId: null,
-    rtdbData: {
-      player2: {
-        online: false,
-      },
-    },
+    rtdbData: {},
     history: {
       player1: 0,
       player2: 0,
@@ -91,7 +87,7 @@ const state = {
           if (idRoomInput) {
             this.authRoomId(idRoomInput).then(data => {
               if (!data.id) {
-                alert(data);
+                return alert(data);
               } else {
                 this.connectToRoom();
                 callback();
@@ -108,8 +104,6 @@ const state = {
     }
   },
   createRoom(callback?) {
-    console.log("entro al createRoom");
-
     const cs = this.getState();
     if (cs.userId) {
       fetch(`${API_BASE_URL}/rooms`, {
@@ -195,13 +189,21 @@ const state = {
   },
   listenRoom() {
     const cs = this.getState();
-    const chatRoomRef = rtdb.ref(`${API_BASE_URL}/rooms/${cs.rtdbRoomId}`);
+    console.log("rtdbRoomId desde listenRoom", cs.rtdbRoomId);
+    if (cs.rtdbRoomId) {
+      const chatRoomRef = rtdb.ref(`/rooms/${cs.rtdbRoomId}`);
 
-    chatRoomRef.on("value", snapshot => {
-      const currentState = this.getState();
-      currentState.rtdbData = snapshot.val();
-      this.setState(currentState);
-    });
+      chatRoomRef.on("value", snapshot => {
+        const currentState = this.getState();
+        const value = snapshot.val();
+        console.log(value);
+
+        currentState.rtdbData = value;
+        this.setState(currentState);
+        console.log(cs.rtdbData);
+        console.log(cs.rtdbData.player2.online);
+      });
+    }
   },
 
   // CUANDO EL PLAYER INGRESE EL CODIGO DE UNA SALA
@@ -210,13 +212,14 @@ const state = {
   // Y AUTOMATICAMENTE SE SETEA COMO ONLINE
   changeNamePlayer2(callback?) {
     const cs = this.getState();
+    const name = cs.name;
     if (cs.name) {
       fetch(`${API_BASE_URL}/rooms/user/${cs.rtdbRoomId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(cs.name),
+        body: JSON.stringify({ name }),
       })
         .then(data => {
           return data.json();

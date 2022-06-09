@@ -8,9 +8,9 @@ import { nanoid } from "nanoid";
 
 // INIT APP AND CFG
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 app.use(express.json());
-app.use(cors());
 
 app.get("/env", (req, res) => {
   res.json({
@@ -57,8 +57,6 @@ app.post("/auth/rooms", (req, res) => {
     .get()
     .then(doc => {
       if (doc.exists) {
-        console.log(doc.data);
-
         res.status(200).json({
           id: doc.id,
           message: "Sala encontrada.",
@@ -164,7 +162,7 @@ app.get("/rooms/:roomId", (req, res) => {
 // LISTENING ROOM
 app.get("/rooms/data/:id", (req, res) => {
   const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}`);
-  chatRoomRef.once("value", snap => {
+  chatRoomRef.on("value", snap => {
     res.status(200).json(snap.val());
   });
 });

@@ -16,6 +16,7 @@ customElements.define(
       const placeholder = this.getAttribute("placeholder");
       input.placeholder = placeholder;
       input.type = type;
+      input.required = true;
       input.className = "input-el";
 
       style.innerText = `

@@ -42,17 +42,17 @@ class Signup extends HTMLElement {
   addListeners() {
     const startBtn = this.shadow.querySelector("#start");
 
-    const cs = state.getState();
-    console.log(cs.name);
     startBtn.addEventListener("click", e => {
       const inputId = this.shadow
         .querySelector(".input-form")
         .shadowRoot.querySelector("input").value;
 
-      state.setName(inputId);
-      const cs = state.getState();
-      console.log(cs.name);
-      Router.go("/select");
+      if (inputId === "") {
+        alert("Debes ingresar un nombre.");
+      } else {
+        state.setName(inputId);
+        Router.go("/select");
+      }
     });
   }
 

@@ -39,16 +39,11 @@ class Instructions extends HTMLElement {
   addListeners() {
     console.log("entre al listener");
     const startBtn = this.querySelector("#start");
-    console.log(startBtn);
 
     const cs = state.getState();
     state.suscribe(() => {
       const player2 = cs.rtdbData.player2;
       const startPlayer2 = player2.start;
-
-      console.log("rtdbRoomId desde game instructions", cs.rtdbRoomId);
-      console.log("entre al suscribe");
-      console.log(startPlayer2);
 
       if (startPlayer2) {
         Router.go("/waiting");

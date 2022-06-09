@@ -43,7 +43,6 @@ class EnterRoom extends HTMLElement {
       const inputId = this.shadow
         .querySelector(".input-form")
         .shadowRoot.querySelector("input").value;
-      console.log(cs.rtdbRoomId);
 
       if (inputId != "") {
         state.createUser(() => {}, inputId);
@@ -57,7 +56,6 @@ class EnterRoom extends HTMLElement {
       } else {
         alert("Debes ingresar un ID.");
       }
-      console.log(cs.roomId);
     });
   }
 

@@ -37,18 +37,13 @@ class ShareId extends HTMLElement {
     this.shadow.appendChild(style);
   }
   addListeners() {
-    console.log("entre al listener");
-
     const cs = state.getState();
     state.suscribe(() => {
-      const player2 = cs.rtdbData.player2;
-      const onlinePlayer2 = player2.online;
-
-      console.log("entre al suscribe");
-      console.log(onlinePlayer2);
-
-      if (onlinePlayer2) {
-        Router.go("/instructions");
+      let player2 = cs.rtdbData.player2;
+      if (cs.rtdbRoomId) {
+        if (player2.online) {
+          Router.go("/instructions");
+        }
       }
     });
   }
@@ -56,7 +51,7 @@ class ShareId extends HTMLElement {
   connectedCallback() {
     const cs = state.getState();
     state.suscribe(() => {
-      if (cs.roomId) {
+      if (cs.roomId && cs.rtdbRoomId) {
         cs.roomId;
         this.render();
       }
