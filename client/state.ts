@@ -83,6 +83,7 @@ const state = {
         .then(res => {
           cs.userId = res.id;
           this.setState(cs);
+          console.log("el usuario se crea:", cs.userId);
 
           if (idRoomInput) {
             this.authRoomId(idRoomInput).then(data => {
@@ -120,9 +121,9 @@ const state = {
           if (cs.roomId == null) {
             cs.roomId = res.id.toString();
             this.setState(cs);
+            console.log("la room id se crea:", cs.roomId);
+            this.connectToRoom(callback);
           }
-          this.connectToRoom();
-          callback();
         });
     }
   },
@@ -173,7 +174,7 @@ const state = {
 
   // RECIBIMOS EL ID DE LA RTDB PARA LUEGO PODER QUEDAR
   // ESCUCHANDO LOS CAMBIOS
-  connectToRoom() {
+  connectToRoom(callback?) {
     const cs = this.getState();
     if (cs.roomId && cs.userId) {
       fetch(`${API_BASE_URL}/rooms/${cs.roomId}?userId=${cs.userId}`)
@@ -183,26 +184,28 @@ const state = {
         .then(res => {
           cs.rtdbRoomId = res.rtdbId;
           this.setState(cs);
-          this.listenRoom();
+          this.listenRoom(callback);
+          console.log("la rtdbId se crea:", cs.rtdbRoomId);
         });
     }
   },
-  listenRoom() {
+  listenRoom(callback?) {
     const cs = this.getState();
-    console.log("rtdbRoomId desde listenRoom", cs.rtdbRoomId);
-    if (cs.rtdbRoomId) {
-      const chatRoomRef = rtdb.ref(`/rooms/${cs.rtdbRoomId}`);
+    console.log("entramos al listenRoom");
+    const chatRoomRef = rtdb.ref(`/rooms/${cs.rtdbRoomId}`);
 
-      chatRoomRef.on("value", snapshot => {
-        const currentState = this.getState();
-        const value = snapshot.val();
-        console.log(value);
+    chatRoomRef.on("value", snapshot => {
+      const currentState = this.getState();
+      const value = snapshot.val();
+      console.log(value);
 
-        currentState.rtdbData = value;
-        this.setState(currentState);
-        console.log(cs.rtdbData);
-        console.log(cs.rtdbData.player2.online);
-      });
+      currentState.rtdbData = value;
+      this.setState(currentState);
+      console.log(cs.rtdbData);
+      console.log(cs.rtdbData.player2.online);
+    });
+    if (callback) {
+      callback();
     }
   },
 

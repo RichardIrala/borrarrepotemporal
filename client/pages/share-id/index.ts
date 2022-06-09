@@ -51,8 +51,7 @@ class ShareId extends HTMLElement {
   connectedCallback() {
     const cs = state.getState();
     state.suscribe(() => {
-      if (cs.roomId && cs.rtdbRoomId) {
-        cs.roomId;
+      if (cs.roomId) {
         this.render();
       }
     });
