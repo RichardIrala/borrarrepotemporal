@@ -37,17 +37,10 @@ class Instructions extends HTMLElement {
     this.shadow.appendChild(style);
   }
   addListeners() {
-    console.log("entre al listener");
-    const startBtn = this.querySelector("#start");
-
-    const cs = state.getState();
-    state.suscribe(() => {
-      const player2 = cs.rtdbData.player2;
-      const startPlayer2 = player2.start;
-
-      if (startPlayer2) {
-        Router.go("/waiting");
-      }
+    const startBtn = this.shadow.querySelector("#start");
+    startBtn.addEventListener("click", e => {
+      state.start();
+      Router.go("/waiting");
     });
   }
 

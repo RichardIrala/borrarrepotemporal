@@ -40,10 +40,8 @@ class ShareId extends HTMLElement {
     const cs = state.getState();
     state.suscribe(() => {
       let player2 = cs.rtdbData.player2;
-      if (cs.rtdbRoomId) {
-        if (player2.online) {
-          Router.go("/instructions");
-        }
+      if (player2.online) {
+        Router.go("/instructions");
       }
     });
   }

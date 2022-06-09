@@ -8,4 +8,5 @@ router.setRoutes([
   { path: "/share_id", component: "shareid-page" },
   { path: "/instructions", component: "instructions-page" },
   { path: "/waiting", component: "waiting-page" },
+  { path: "/game", component: "game-page" },
 ]);

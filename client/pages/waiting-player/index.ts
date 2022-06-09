@@ -36,7 +36,17 @@ class Waiting extends HTMLElement {
     `;
     this.shadow.appendChild(style);
   }
-  addListeners() {}
+  addListeners() {
+    state.suscribe(() => {
+      const cs = state.getState();
+      const player1 = cs.rtdbData.player1;
+      const player2 = cs.rtdbData.player2;
+      const startPlayer1 = player1.start;
+      const startPlayer2 = player2.start;
+
+      if (startPlayer1 && startPlayer2) Router.go("/game");
+    });
+  }
 
   connectedCallback() {
     this.render();
@@ -56,6 +66,7 @@ class Waiting extends HTMLElement {
       </div>
     `;
     this.shadow.appendChild(div);
+    this.addListeners();
   }
 }
 customElements.define("waiting-page", Waiting);
