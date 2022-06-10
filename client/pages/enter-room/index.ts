@@ -48,6 +48,7 @@ class EnterRoom extends HTMLElement {
         state.createUser(() => {}, inputId);
         state.suscribe(() => {
           if (cs.rtdbRoomId) {
+            console.log("suscribe de enter room");
             state.changeNamePlayer2(() => {
               Router.go("/instructions");
             });

@@ -38,6 +38,7 @@ class Instructions extends HTMLElement {
   }
   addListeners() {
     const startBtn = this.shadow.querySelector("#start");
+
     startBtn.addEventListener("click", e => {
       state.start();
       Router.go("/waiting");

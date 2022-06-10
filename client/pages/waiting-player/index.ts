@@ -44,6 +44,9 @@ class Waiting extends HTMLElement {
       const startPlayer1 = player1.start;
       const startPlayer2 = player2.start;
 
+      console.log("startplayer1 desde waiting", startPlayer1);
+      console.log("startplayer2 desde waiting", startPlayer2);
+
       if (startPlayer1 && startPlayer2) Router.go("/game");
     });
   }

@@ -35,16 +35,17 @@ class ShareId extends HTMLElement {
       }
     `;
     this.shadow.appendChild(style);
-  }
-  addListeners() {
+
     const cs = state.getState();
     state.suscribe(() => {
+      let player1 = cs.rtdbData.player1;
       let player2 = cs.rtdbData.player2;
-      if (player2.online) {
+      if (player1.online && player2.online) {
         Router.go("/instructions");
       }
     });
   }
+  addListeners() {}
 
   connectedCallback() {
     const cs = state.getState();
