@@ -220,7 +220,7 @@ const state = {
           return data.json();
         })
         .then(res => {
-          callback();
+          if (callback) callback();
           return res;
         });
     }

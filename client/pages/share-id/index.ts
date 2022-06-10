@@ -35,24 +35,25 @@ class ShareId extends HTMLElement {
       }
     `;
     this.shadow.appendChild(style);
-
     const cs = state.getState();
     state.suscribe(() => {
-      let player1 = cs.rtdbData.player1;
       let player2 = cs.rtdbData.player2;
-      if (player1.online && player2.online) {
-        Router.go("/instructions");
+      if (player2.online) {
+        console.log("desde el if playeronline shareid");
       }
     });
   }
-  addListeners() {}
+  addListeners() {
+    const nextBtn = this.shadow.querySelector("#next");
+    nextBtn.addEventListener("click", e => {
+      Router.go("/instructions");
+    });
+  }
 
   connectedCallback() {
     const cs = state.getState();
     state.suscribe(() => {
-      if (cs.roomId) {
-        this.render();
-      }
+      if (cs.roomId) this.render();
     });
     this.render();
   }
@@ -71,6 +72,9 @@ class ShareId extends HTMLElement {
 
         <text-custom size="40px">Con tu contrincante y espera a que ingrese</text-custom>
       </div>
+
+      <btn-comp id="next" mt="15px">Continuar</btn-comp>
+
       
       <div class="container__hand">
         <hands-comp hand="rock"></hands-comp>

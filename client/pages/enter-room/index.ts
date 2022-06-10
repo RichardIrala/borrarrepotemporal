@@ -39,21 +39,13 @@ class EnterRoom extends HTMLElement {
     const startBtn = this.shadow.querySelector("#start");
 
     startBtn.addEventListener("click", e => {
-      const cs = state.getState();
       const inputId = this.shadow
         .querySelector(".input-form")
         .shadowRoot.querySelector("input").value;
 
       if (inputId != "") {
         state.createUser(() => {}, inputId);
-        state.suscribe(() => {
-          if (cs.rtdbRoomId) {
-            console.log("suscribe de enter room");
-            state.changeNamePlayer2(() => {
-              Router.go("/instructions");
-            });
-          }
-        });
+        Router.go("/instructions");
       } else {
         alert("Debes ingresar un ID.");
       }
@@ -61,6 +53,12 @@ class EnterRoom extends HTMLElement {
   }
 
   connectedCallback() {
+    const cs = state.getState();
+    state.suscribe(() => {
+      if (cs.rtdbRoomId) {
+        state.changeNamePlayer2();
+      }
+    });
     this.render();
   }
   render() {
