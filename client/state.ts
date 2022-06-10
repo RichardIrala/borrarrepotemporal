@@ -63,6 +63,20 @@ const state = {
     }
     return player;
   },
+  checkPlayerFront() {
+    const cs = this.getState();
+    const player1 = cs.rtdbData.player1.userName;
+    const player2 = cs.rtdbData.player2.userName;
+    let player: string;
+
+    if (cs.name == player1) {
+      player = player1;
+    }
+    if (cs.name == player2) {
+      player = player2;
+    }
+    return player;
+  },
 
   // OBTENEMOS EL ID DEL USUARIO EN FIRESTORE,
   // PARA LUEGO CON ESE ID CREAR UNA ROOM EN LA RTDB,
