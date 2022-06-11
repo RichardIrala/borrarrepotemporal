@@ -3,6 +3,10 @@ import { state } from "../../state";
 
 class Game extends HTMLElement {
   shadow: ShadowRoot;
+  movePlayer1: string;
+  movePlayer2: string;
+  counter: number = 5;
+
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
@@ -35,41 +39,133 @@ class Game extends HTMLElement {
       }
     `;
     this.shadow.appendChild(style);
+    const cs = state.getState();
+
+    state.suscribe(() => {
+      const player1 = cs.rtdbData.player1;
+      const player2 = cs.rtdbData.player2;
+      let player1Move = player1.moveChoise;
+      let player2Move = player2.moveChoise;
+
+      this.movePlayer1 = player1Move;
+      this.movePlayer2 = player2Move;
+    });
   }
-  addListeners() {}
+  addListeners() {
+    const countdown = setInterval(() => {
+      this.counter--;
+      const counterEl = this.shadow.querySelector(".master-circle");
+      counterEl.textContent = String(this.counter);
+
+      if (this.counter <= 0) {
+        clearInterval(countdown);
+      }
+    }, 1000);
+
+    const countdownEl = this.shadow.querySelector(".master-circle");
+    const handsDiv = this.shadow.querySelector(".container__hand");
+
+    const handsTop = this.shadow.querySelector(".hands__top");
+    const handstoneTop = this.shadow.querySelector(".stone__top");
+    const handPaperTop = this.shadow.querySelector(".paper__top");
+    const handScissorsTop = this.shadow.querySelector(".scissors__top");
+
+    const handsBottom = this.shadow.querySelector(".container__hand").children;
+    const handstoneBottom = this.shadow.querySelector(".stone__bottom");
+    const handScissorsBottom = this.shadow.querySelector(".scissors__bottom");
+    const handPaperBottom = this.shadow.querySelector(".paper__bottom");
+
+    function activeHands(hand) {
+      if (hand === "scissors") {
+        handScissorsBottom.classList.remove("disabled");
+        handScissorsBottom.classList.add("actived");
+        handstoneBottom.classList.add("hand-display-none");
+        handPaperBottom.classList.add("hand-display-none");
+      } else if (hand === "stone") {
+        handstoneBottom.classList.remove("disabled");
+        handstoneBottom.classList.add("actived");
+        handScissorsBottom.classList.add("hand-display-none");
+        handPaperBottom.classList.add("hand-display-none");
+      } else if (hand === "paper") {
+        handPaperBottom.classList.remove("disabled");
+        handPaperBottom.classList.add("actived");
+        handScissorsBottom.classList.add("hand-display-none");
+        handstoneBottom.classList.add("hand-display-none");
+      }
+      setTimeout(() => {
+        countdownEl.remove();
+      }, 1500);
+    }
+
+    const cs = state.getState();
+    state.suscribe(() => {
+      const actualName = cs.name;
+      const namePlayer1 = cs.rtdbData.player1.userName;
+      const movePlayer1 = cs.rtdbData.player1.moveChoise;
+      const namePlayer2 = cs.rtdbData.player2.userName;
+      const movePlayer2 = cs.rtdbData.player2.moveChoise;
+      let opponent;
+
+      setTimeout(() => {
+        if (actualName === namePlayer1) opponent = movePlayer2;
+        if (actualName === namePlayer2) opponent = movePlayer1;
+
+        handsDiv.classList.add("active-hands");
+        handsTop.classList.add("actived-hands-top");
+
+        if (opponent == "scissors") {
+          handScissorsTop.classList.add("actived-hand-top");
+        }
+        if (opponent == "stone") {
+          handstoneTop.classList.add("actived-hand-top");
+        }
+        if (opponent == "paper") {
+          handPaperTop.classList.add("actived-hand-top");
+        }
+        setTimeout(() => {
+          Router.go("/results");
+        }, 1500);
+      }, 2500);
+    });
+
+    for (const hand of handsBottom) {
+      hand.addEventListener("click", () => {
+        const type = hand.getAttribute("hand");
+        clearInterval(countdown);
+
+        if (type === "scissors") {
+          state.changeMove("scissors");
+          activeHands("scissors");
+        } else if (type === "stone") {
+          state.changeMove("stone");
+          activeHands("stone");
+        } else if (type === "paper") {
+          state.changeMove("paper");
+          activeHands("paper");
+        }
+      });
+    }
+  }
 
   connectedCallback() {
     this.render();
   }
   render() {
-    let counter = 5;
-    const countdown = setInterval(() => {
-      counter--;
-      const counterEl = this.shadow.querySelector(".master-circle");
-      counterEl.textContent = String(counter);
-
-      if (counter <= 0) {
-        clearInterval(countdown);
-      }
-    }, 1000);
-
     const div = document.createElement("div");
-    const circleCounter = div.querySelector(".master-circle");
-    console.log(circleCounter);
 
     div.className = "container";
     div.innerHTML = `
     <div class="hands__top">
-      <hands-comp hand="rock" class="rock__top hand-display-none"></hands-comp>
+      <hands-comp hand="stone" class="stone__top hand-display-none"></hands-comp>
       <hands-comp hand="paper" class="paper__top hand-display-none"></hands-comp>
       <hands-comp hand="scissors" class="scissors__top hand-display-none"></hands-comp>
     </div>
 
-    <div class="master-circle">${counter}</div>
+    <div class="master-circle">${this.counter}</div>
     
     
     <div class="container__hand">
-      <hands-comp hand="rock" class="rock__bottom disabled"></hands-comp>
+      <hands-comp hand="stone" class="stone__bottom disabled"></hands-comp>
       <hands-comp hand="paper" class="paper__bottom disabled"></hands-comp>
       <hands-comp hand="scissors" class="scissors__bottom disabled"></hands-comp>
     </div>
@@ -187,88 +283,6 @@ class Game extends HTMLElement {
     }
   }
   `;
-    const countdownEl = div.querySelector(".master-circle");
-    const handsDiv = div.querySelector(".container__hand");
-
-    const handsTop = div.querySelector(".hands__top");
-    const handRockTop = div.querySelector(".rock__top");
-    const handPaperTop = div.querySelector(".paper__top");
-    const handScissorsTop = div.querySelector(".scissors__top");
-
-    const handsBottom = div.querySelector(".container__hand").children;
-    const handRockBottom = div.querySelector(".rock__bottom");
-    const handScissorsBottom = div.querySelector(".scissors__bottom");
-    const handPaperBottom = div.querySelector(".paper__bottom");
-
-    for (const hand of handsBottom) {
-      hand.addEventListener("click", () => {
-        const type = hand.getAttribute("hand");
-        clearInterval(countdown);
-
-        if (type === "scissors") {
-          state.changeMove("scissors");
-          activeHands("scissors");
-        } else if (type === "rock") {
-          state.changeMove("rock");
-          activeHands("rock");
-        } else if (type === "paper") {
-          state.changeMove("paper");
-          activeHands("paper");
-        }
-      });
-    }
-
-    function activeHands(hand) {
-      if (hand === "scissors") {
-        handScissorsBottom.classList.remove("disabled");
-        handScissorsBottom.classList.add("actived");
-        setTimeout(() => {
-          handRockBottom.classList.add("hand-display-none");
-          handPaperBottom.classList.add("hand-display-none");
-        }, 1500);
-      } else if (hand === "rock") {
-        handRockBottom.classList.remove("disabled");
-        handRockBottom.classList.add("actived");
-        setTimeout(() => {
-          handScissorsBottom.classList.add("hand-display-none");
-          handPaperBottom.classList.add("hand-display-none");
-        }, 1500);
-      } else if (hand === "paper") {
-        handPaperBottom.classList.remove("disabled");
-        handPaperBottom.classList.add("actived");
-        setTimeout(() => {
-          handScissorsBottom.classList.add("hand-display-none");
-          handRockBottom.classList.add("hand-display-none");
-        }, 1500);
-      }
-
-      setTimeout(() => {
-        // TODO: MOSTRAR LAS MANOS DEL CONTRINCANTE
-        // SI EL NOMBRE QUE RECIBO ES DISTINTO AL DEL STATE
-        // ESE PLAYER ES EL CONTRINCANTE Y LO MOSTRAREMOS ARRIBA
-        const cs = state.getState();
-        const actualPlayer = state.checkPlayerFront();
-        let opponentMove;
-        if (actualPlayer !== cs.name) {
-        }
-        countdownEl.remove();
-
-        handsDiv.classList.add("active-hands");
-        handsTop.classList.add("actived-hands-top");
-
-        if (opponentMove == "scissors") {
-          handScissorsTop.classList.add("actived-hand-top");
-        }
-        if (opponentMove == "rock") {
-          handRockTop.classList.add("actived-hand-top");
-        }
-        if (opponentMove == "paper") {
-          handPaperTop.classList.add("actived-hand-top");
-        }
-
-        setTimeout(() => {}, 1500);
-      }, 1500);
-    }
 
     this.shadow.appendChild(div);
     this.shadow.appendChild(style);

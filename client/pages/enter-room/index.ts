@@ -73,7 +73,7 @@ class EnterRoom extends HTMLElement {
       </form>
 
       <div class="container__hand">
-        <hands-comp hand="rock"></hands-comp>
+        <hands-comp hand="stone"></hands-comp>
         <hands-comp hand="paper"></hands-comp>
         <hands-comp hand="scissors"></hands-comp>
       </div>

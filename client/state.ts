@@ -12,6 +12,8 @@ const state = {
     roomId: null,
     rtdbRoomId: null,
     rtdbData: {},
+    choiseP1: false,
+    choiseP2: false,
     history: {
       player1: 0,
       player2: 0,
@@ -65,15 +67,15 @@ const state = {
   },
   checkPlayerFront() {
     const cs = this.getState();
-    const player1 = cs.rtdbData.player1.userName;
-    const player2 = cs.rtdbData.player2.userName;
+    const namePlayer1 = cs.rtdbData.player1.userName;
+    const namePlayer2 = cs.rtdbData.player2.userName;
     let player: string;
 
-    if (cs.name == player1) {
-      player = player1;
+    if (cs.name == namePlayer1) {
+      player = namePlayer1;
     }
-    if (cs.name == player2) {
-      player = player2;
+    if (cs.name == namePlayer2) {
+      player = namePlayer2;
     }
     return player;
   },
@@ -271,7 +273,44 @@ const state = {
       .then(data => {
         return data.json();
       })
-      .then(res => res);
+      .then(res => {
+        return res;
+      });
+  },
+  whoWins() {
+    const cs = this.getState();
+    const movePlayer1 = cs.rtdbData.player1.moveChoise;
+    const movePlayer2 = cs.rtdbData.player2.moveChoise;
+
+    const tieS: boolean =
+      movePlayer1 == "scissors" && movePlayer2 == "scissors";
+    const tieR: boolean = movePlayer1 == "rock" && movePlayer2 == "rock";
+    const tieP: boolean = movePlayer1 == "paper" && movePlayer2 == "paper";
+    const tie = [tieP, tieR, tieS].includes(true);
+
+    if (tie) {
+      return "tie";
+    }
+
+    let scoreP1 = cs.history.player1;
+    let scoreP2 = cs.history.player2;
+    if (
+      (movePlayer1 == "scissors" && movePlayer2 == "paper") ||
+      (movePlayer1 == "rock" && movePlayer2 == "scissors") ||
+      (movePlayer1 == "paper" && movePlayer2 == "rock")
+    ) {
+      scoreP1 += 1;
+      return "player1";
+    }
+    if (
+      // Player 2 wins
+      (movePlayer2 == "scissor" && movePlayer1 == "paper") ||
+      (movePlayer2 == "stone" && movePlayer1 == "scissor") ||
+      (movePlayer2 == "paper" && movePlayer1 == "stone")
+    ) {
+      scoreP2 += 1;
+      return "player2";
+    }
   },
 
   setState(newState) {

@@ -9,4 +9,5 @@ router.setRoutes([
   { path: "/instructions", component: "instructions-page" },
   { path: "/waiting", component: "waiting-page" },
   { path: "/game", component: "game-page" },
+  { path: "/results", component: "results-page" },
 ]);

@@ -64,20 +64,18 @@ class ShareId extends HTMLElement {
 
     div.innerHTML = `
       <div class="leyenda">
-        <text-custom size="40px">Compartí el código:</text-custom>
+        <text-custom size="40px">Compartí el código con tu contricante:</text-custom>
 
         <text-custom size="40px" weight="700">${
           cs.roomId ? cs.roomId : "Esperando codigo..."
         }</text-custom>
-
-        <text-custom size="40px">Con tu contrincante y espera a que ingrese</text-custom>
       </div>
 
       <btn-comp id="next" mt="15px">Continuar</btn-comp>
 
       
       <div class="container__hand">
-        <hands-comp hand="rock"></hands-comp>
+        <hands-comp hand="stone"></hands-comp>
         <hands-comp hand="paper"></hands-comp>
         <hands-comp hand="scissors"></hands-comp>
       </div>

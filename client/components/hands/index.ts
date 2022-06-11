@@ -1,5 +1,5 @@
 const hands = {
-  rock: require("url:../../images/rock.png"),
+  stone: require("url:../../images/rock.png"),
   scissors: require("url:../../images/scissors.png"),
   paper: require("url:../../images/paper.png"),
 };
