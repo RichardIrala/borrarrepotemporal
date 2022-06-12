@@ -30,7 +30,13 @@ class Results extends HTMLElement {
     `;
     this.shadow.appendChild(style);
   }
-  addListeners() {}
+  addListeners() {
+    const playAgain = this.shadow.querySelector("#playagain");
+    playAgain.addEventListener("click", e => Router.go("/instructions"));
+    const backHome = this.shadow.querySelector("#backhome");
+    backHome.addEventListener("click", e => Router.go("/select"));
+    state.whoWins();
+  }
 
   connectedCallback() {
     this.render();
@@ -38,37 +44,48 @@ class Results extends HTMLElement {
   render() {
     const div: HTMLElement = document.createElement("div");
     div.classList.add("container");
-
     const cs = state.getState();
-    let whoWins = state.whoWins();
-    let background;
-    let imagen;
+    const actualName = cs.name;
+    const player1 = cs.rtdbData.player1.userName;
+    const player2 = cs.rtdbData.player2.userName;
+    let scoreP1 = cs.history.player1;
+    let scoreP2 = cs.history.player2;
 
-    if (whoWins === "wins") {
-      imagen = resultImages.win;
-      background = "rgba(136, 137, 73, 0.6)";
-    } else if (whoWins === "loss") {
-      imagen = resultImages.loss;
-      background = "rgba(137, 73, 73, 0.6)";
-    } else {
-      imagen = resultImages.tie;
-      background = "rgba(106, 112, 101, 0.6)";
+    let whoWins = cs.whoWins;
+
+    let image;
+
+    if (whoWins == "player1") {
+      if (actualName == player1) {
+        image = resultImages.win;
+      }
+      if (actualName == player2) {
+        image = resultImages.loss;
+      }
+    }
+    if (whoWins == "player2") {
+      if (actualName == player2) {
+        image = resultImages.win;
+      }
+      if (actualName == player1) {
+        image = resultImages.loss;
+      }
     }
 
     div.innerHTML = `
       <div>
-        <img class="img__result" src="${imagen}">
+        <img class="img__result" src="${image}">
       </div>
       <div class="board">
         <div>
           <h3>Score</h3>
         </div>
-          <text-custom>Vos: ${cs.history.player1}</text-custom>
-          <text-custom>Máquina: ${cs.history.player2}</text-custom>
+          <text-custom>${player1}: ${scoreP1}</text-custom>
+          <text-custom>${player2}: ${scoreP2}</text-custom>
       </div>
 
-      <btn-comp class="button">Volver a Jugar</btn-comp>
-      <btn-comp class="button back">Volver al Inicio</btn-comp>
+      <btn-comp id="playagain" class="button">Volver a Jugar</btn-comp>
+      <btn-comp id="backhome" class="button back">Volver al Inicio</btn-comp>
     `;
     this.shadow.appendChild(div);
     this.addListeners();

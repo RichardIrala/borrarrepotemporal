@@ -18,6 +18,7 @@ const state = {
       player1: 0,
       player2: 0,
     },
+    whoWins: null,
   },
   listeners: [],
 
@@ -274,6 +275,7 @@ const state = {
         return data.json();
       })
       .then(res => {
+        this.whoWins();
         return res;
       });
   },
@@ -281,35 +283,61 @@ const state = {
     const cs = this.getState();
     const movePlayer1 = cs.rtdbData.player1.moveChoise;
     const movePlayer2 = cs.rtdbData.player2.moveChoise;
-
-    const tieS: boolean =
-      movePlayer1 == "scissors" && movePlayer2 == "scissors";
-    const tieR: boolean = movePlayer1 == "rock" && movePlayer2 == "rock";
-    const tieP: boolean = movePlayer1 == "paper" && movePlayer2 == "paper";
-    const tie = [tieP, tieR, tieS].includes(true);
-
-    if (tie) {
-      return "tie";
-    }
-
+    // WIN PLAYER1
     let scoreP1 = cs.history.player1;
-    let scoreP2 = cs.history.player2;
+    console.log("score p2,", scoreP1);
     if (
       (movePlayer1 == "scissors" && movePlayer2 == "paper") ||
       (movePlayer1 == "rock" && movePlayer2 == "scissors") ||
       (movePlayer1 == "paper" && movePlayer2 == "rock")
     ) {
-      scoreP1 += 1;
-      return "player1";
+      return (scoreP1 = scoreP1 + 1), (cs.whoWins = "player1");
     }
+    console.log("score p2,", scoreP1);
+    // WIN PLAYER 2
+    let scoreP2 = cs.history.player2;
+    console.log("score p2,", scoreP2);
     if (
-      // Player 2 wins
       (movePlayer2 == "scissor" && movePlayer1 == "paper") ||
       (movePlayer2 == "stone" && movePlayer1 == "scissor") ||
       (movePlayer2 == "paper" && movePlayer1 == "stone")
     ) {
-      scoreP2 += 1;
-      return "player2";
+      return (scoreP2 = scoreP2 + 1), (cs.whoWins = "player2");
+    }
+    console.log("score p2,", scoreP2);
+  },
+
+  changeScore() {
+    this.whoWins();
+    const cs = this.getState();
+    const roomId = cs.roomId;
+    const scoreP1 = cs.history.player1;
+    const scoreP2 = cs.history.player2;
+    return fetch(`${API_BASE_URL}/rooms/score`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: roomId, player1: scoreP1, player2: scoreP2 }),
+    })
+      .then(data => {
+        return data.json();
+      })
+      .then(res => {
+        this.getScore();
+        return res;
+      });
+  },
+  getScore() {
+    const cs = this.getState();
+    if (cs.roomId && cs.userId) {
+      fetch(`${API_BASE_URL}/rooms/${cs.roomId}?userId=${cs.userId}`)
+        .then(data => {
+          return data.json();
+        })
+        .then(res => {
+          console.log(res);
+        });
     }
   },
 

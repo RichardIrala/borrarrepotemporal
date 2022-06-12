@@ -121,7 +121,12 @@ app.post("/rooms", (req, res) => {
             const roomId = 1000 + Math.floor(Math.random() * 999);
             roomsColl
               .doc(roomId.toString())
-              .set({ rtdbId: roomLongId, player1: userName })
+              .set({
+                rtdbId: roomLongId,
+                player1: userName,
+                scorePlayer1: 0,
+                scorePlayer2: 0,
+              })
               .then(() => {
                 res.status(200).json({
                   id: roomId,
@@ -132,6 +137,26 @@ app.post("/rooms", (req, res) => {
         res.status(401).json({
           message: "El usuario no existe.",
         });
+      }
+    });
+});
+app.put("/rooms/score", (req, res) => {
+  const { id, player1, player2 } = req.body;
+
+  roomsColl
+    .doc(id.toString())
+    .update({
+      scorePlayer1: player1,
+      scorePlayer2: player2,
+    })
+    .then(doc => {
+      if (doc.writeTime) {
+        res.status(200).json({
+          id: id,
+          message: `La puntuacion se actualizo correctamente.`,
+        });
+      } else {
+        return `Hubo un problema en actualizar la puntuacion.`;
       }
     });
 });

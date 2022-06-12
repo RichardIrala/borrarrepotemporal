@@ -35,13 +35,6 @@ class ShareId extends HTMLElement {
       }
     `;
     this.shadow.appendChild(style);
-    const cs = state.getState();
-    state.suscribe(() => {
-      let player2 = cs.rtdbData.player2;
-      if (player2.online) {
-        console.log("desde el if playeronline shareid");
-      }
-    });
   }
   addListeners() {
     const nextBtn = this.shadow.querySelector("#next");
