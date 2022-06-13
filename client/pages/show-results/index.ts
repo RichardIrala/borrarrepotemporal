@@ -8,6 +8,8 @@ const resultImages = {
 
 class Results extends HTMLElement {
   shadow: ShadowRoot;
+  scoreP1;
+  scoreP2;
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: "open" });
@@ -35,22 +37,22 @@ class Results extends HTMLElement {
     playAgain.addEventListener("click", e => Router.go("/instructions"));
     const backHome = this.shadow.querySelector("#backhome");
     backHome.addEventListener("click", e => Router.go("/select"));
-    state.whoWins();
   }
 
   connectedCallback() {
+    const cs = state.getState();
+    this.scoreP1 = cs.history.player1;
+    this.scoreP2 = cs.history.player2;
     this.render();
   }
   render() {
     const div: HTMLElement = document.createElement("div");
     div.classList.add("container");
+
     const cs = state.getState();
     const actualName = cs.name;
     const player1 = cs.rtdbData.player1.userName;
     const player2 = cs.rtdbData.player2.userName;
-    let scoreP1 = cs.history.player1;
-    let scoreP2 = cs.history.player2;
-
     let whoWins = cs.whoWins;
 
     let image;
@@ -80,8 +82,8 @@ class Results extends HTMLElement {
         <div>
           <h3>Score</h3>
         </div>
-          <text-custom>${player1}: ${scoreP1}</text-custom>
-          <text-custom>${player2}: ${scoreP2}</text-custom>
+        <text-custom size="20px" weight="bold">${player1}: ${this.scoreP1}</text-custom>
+        <text-custom size="20px" weight="bold">${player2}: ${this.scoreP2}</text-custom>
       </div>
 
       <btn-comp id="playagain" class="button">Volver a Jugar</btn-comp>

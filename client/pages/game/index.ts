@@ -3,8 +3,6 @@ import { state } from "../../state";
 
 class Game extends HTMLElement {
   shadow: ShadowRoot;
-  movePlayer1: string;
-  movePlayer2: string;
   counter: number = 5;
 
   constructor() {
@@ -39,17 +37,6 @@ class Game extends HTMLElement {
       }
     `;
     this.shadow.appendChild(style);
-    const cs = state.getState();
-
-    state.suscribe(() => {
-      const player1 = cs.rtdbData.player1;
-      const player2 = cs.rtdbData.player2;
-      let player1Move = player1.moveChoise;
-      let player2Move = player2.moveChoise;
-
-      this.movePlayer1 = player1Move;
-      this.movePlayer2 = player2Move;
-    });
   }
   addListeners() {
     const countdown = setInterval(() => {
@@ -94,7 +81,7 @@ class Game extends HTMLElement {
       }
       setTimeout(() => {
         countdownEl.remove();
-      }, 1500);
+      }, 5000);
     }
 
     const cs = state.getState();
@@ -124,14 +111,14 @@ class Game extends HTMLElement {
         }
         setTimeout(() => {
           Router.go("/results");
-        }, 1500);
-      }, 2500);
+          state.whoWins();
+        }, 2500);
+      }, 5000);
     });
 
     for (const hand of handsBottom) {
       hand.addEventListener("click", () => {
         const type = hand.getAttribute("hand");
-        clearInterval(countdown);
 
         if (type === "scissors") {
           state.changeMove("scissors");
@@ -143,6 +130,9 @@ class Game extends HTMLElement {
           state.changeMove("paper");
           activeHands("paper");
         }
+        setTimeout(() => {
+          clearInterval(countdown);
+        }, 5000);
       });
     }
   }

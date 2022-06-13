@@ -275,7 +275,6 @@ const state = {
         return data.json();
       })
       .then(res => {
-        this.whoWins();
         return res;
       });
   },
@@ -284,27 +283,28 @@ const state = {
     const movePlayer1 = cs.rtdbData.player1.moveChoise;
     const movePlayer2 = cs.rtdbData.player2.moveChoise;
     // WIN PLAYER1
-    let scoreP1 = cs.history.player1;
-    console.log("score p2,", scoreP1);
+    let scorePlayer1 = cs.history.player1;
+
     if (
       (movePlayer1 == "scissors" && movePlayer2 == "paper") ||
-      (movePlayer1 == "rock" && movePlayer2 == "scissors") ||
-      (movePlayer1 == "paper" && movePlayer2 == "rock")
+      (movePlayer1 == "stone" && movePlayer2 == "scissors") ||
+      (movePlayer1 == "paper" && movePlayer2 == "stone")
     ) {
-      return (scoreP1 = scoreP1 + 1), (cs.whoWins = "player1");
+      scorePlayer1++;
+      cs.whoWins = "player1";
     }
-    console.log("score p2,", scoreP1);
+    console.log("score p1,", scorePlayer1);
     // WIN PLAYER 2
-    let scoreP2 = cs.history.player2;
-    console.log("score p2,", scoreP2);
+    let scorePlayer2 = cs.history.player2;
     if (
       (movePlayer2 == "scissor" && movePlayer1 == "paper") ||
       (movePlayer2 == "stone" && movePlayer1 == "scissor") ||
       (movePlayer2 == "paper" && movePlayer1 == "stone")
     ) {
-      return (scoreP2 = scoreP2 + 1), (cs.whoWins = "player2");
+      scorePlayer2++;
+      cs.whoWins = "player2";
     }
-    console.log("score p2,", scoreP2);
+    console.log("score p2,", scorePlayer2);
   },
 
   changeScore() {
