@@ -214,6 +214,7 @@ const state = {
       this.setState(currentState);
 
       console.log(cs.rtdbData);
+      console.log(cs);
     });
     if (callback) callback();
   },
@@ -243,7 +244,7 @@ const state = {
     }
   },
 
-  start() {
+  start(status) {
     const cs = this.getState();
     const player = this.checkPlayer();
 
@@ -252,7 +253,7 @@ const state = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ start: true, player }),
+      body: JSON.stringify({ start: status, player }),
     })
       .then(data => {
         return data.json();
@@ -272,6 +273,8 @@ const state = {
       body: JSON.stringify({ moveChoise: movePlayer, player }),
     })
       .then(data => {
+        if (player == "player1") cs.choiseP1 = true;
+        if (player == "player2") cs.choiseP2 = true;
         return data.json();
       })
       .then(res => {
@@ -292,6 +295,13 @@ const state = {
     ) {
       scorePlayer1++;
       cs.whoWins = "player1";
+    }
+    if (
+      (movePlayer1 == "scissors" && movePlayer2 == "scissors") ||
+      (movePlayer1 == "stone" && movePlayer2 == "stone") ||
+      (movePlayer1 == "paper" && movePlayer2 == "paper")
+    ) {
+      cs.whoWins = "tie";
     }
     console.log("score p1,", scorePlayer1);
     // WIN PLAYER 2

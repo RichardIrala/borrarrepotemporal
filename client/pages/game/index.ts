@@ -81,6 +81,7 @@ class Game extends HTMLElement {
       }
       setTimeout(() => {
         countdownEl.remove();
+        state.whoWins();
       }, 5000);
     }
 
@@ -109,12 +110,11 @@ class Game extends HTMLElement {
         if (opponent == "paper") {
           handPaperTop.classList.add("actived-hand-top");
         }
-        setTimeout(() => {
-          Router.go("/results");
-          state.whoWins();
-        }, 2500);
       }, 5000);
     });
+    setTimeout(() => {
+      Router.go("/results");
+    }, 6000);
 
     for (const hand of handsBottom) {
       hand.addEventListener("click", () => {
@@ -131,8 +131,10 @@ class Game extends HTMLElement {
           activeHands("paper");
         }
         setTimeout(() => {
+          state.whoWins();
+
           clearInterval(countdown);
-        }, 5000);
+        }, 4000);
       });
     }
   }

@@ -40,7 +40,7 @@ class Instructions extends HTMLElement {
     const startBtn = this.shadow.querySelector("#start");
 
     startBtn.addEventListener("click", e => {
-      state.start();
+      state.start(true);
       Router.go("/waiting");
     });
   }

@@ -34,15 +34,21 @@ class Results extends HTMLElement {
   }
   addListeners() {
     const playAgain = this.shadow.querySelector("#playagain");
-    playAgain.addEventListener("click", e => Router.go("/instructions"));
+    playAgain.addEventListener("click", e => {
+      state.start(false);
+      Router.go("/instructions");
+    });
     const backHome = this.shadow.querySelector("#backhome");
-    backHome.addEventListener("click", e => Router.go("/select"));
+    backHome.addEventListener("click", e => {
+      state.start(false);
+      Router.go("/select");
+    });
   }
 
   connectedCallback() {
     const cs = state.getState();
-    this.scoreP1 = cs.history.player1;
-    this.scoreP2 = cs.history.player2;
+    cs.choiseP1 = false;
+    cs.choiseP2 = false;
     this.render();
   }
   render() {
@@ -73,6 +79,9 @@ class Results extends HTMLElement {
         image = resultImages.loss;
       }
     }
+    if (whoWins == "tie") {
+      image = resultImages.tie;
+    }
 
     div.innerHTML = `
       <div>
@@ -82,8 +91,8 @@ class Results extends HTMLElement {
         <div>
           <h3>Score</h3>
         </div>
-        <text-custom size="20px" weight="bold">${player1}: ${this.scoreP1}</text-custom>
-        <text-custom size="20px" weight="bold">${player2}: ${this.scoreP2}</text-custom>
+        <text-custom size="20px" weight="bold">${player1}: ${cs.history.player1}</text-custom>
+        <text-custom size="20px" weight="bold">${player2}: ${cs.history.player2}</text-custom>
       </div>
 
       <btn-comp id="playagain" class="button">Volver a Jugar</btn-comp>

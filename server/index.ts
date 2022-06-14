@@ -9,7 +9,7 @@ import { nanoid } from "nanoid";
 // INIT APP AND CFG
 const app = express();
 app.use(cors());
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get("/env", (req, res) => {
