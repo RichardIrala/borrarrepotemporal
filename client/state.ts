@@ -3,8 +3,6 @@ import { map } from "lodash";
 
 const API_BASE_URL = "https://piedra-papel-tijeras-online-df.herokuapp.com";
 
-//TODO: Validar quien es la persona ganadora y sumar el punto en base a eso
-
 const state = {
   data: {
     name: null,
@@ -212,9 +210,6 @@ const state = {
       const value = snapshot.val();
       currentState.rtdbData = value;
       this.setState(currentState);
-
-      console.log(cs.rtdbData);
-      console.log(cs);
     });
     if (callback) callback();
   },
@@ -365,7 +360,6 @@ const state = {
           return data.json();
         })
         .then(res => {
-          console.log(res);
           history.player1 = res.scorePlayer1;
           history.player2 = res.scorePlayer2;
           this.setState(cs);
