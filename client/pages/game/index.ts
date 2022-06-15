@@ -128,9 +128,7 @@ class Game extends HTMLElement {
       }, 6000);
 
       setTimeout(() => {
-        state.whoWins();
         console.log("se ejecuta mas de una vez?");
-
         Router.go("/results");
       }, 9000);
 

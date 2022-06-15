@@ -283,46 +283,49 @@ const state = {
     const cs = this.getState();
     const movePlayer1 = cs.rtdbData.player1.moveChoise;
     const movePlayer2 = cs.rtdbData.player2.moveChoise;
-    // WIN PLAYER1
-    let scorePlayer1 = cs.history.player1;
 
-    if (
-      (movePlayer1 == "scissors" && movePlayer2 == "paper") ||
-      (movePlayer1 == "stone" && movePlayer2 == "scissors") ||
-      (movePlayer1 == "paper" && movePlayer2 == "stone")
-    ) {
-      scorePlayer1++;
-      cs.whoWins = "player1";
-      this.changeScore();
+    // WIN PLAYER1
+    const player1Wins = [
+      movePlayer1 === "stone" && movePlayer2 === "scissors",
+      movePlayer1 === "paper" && movePlayer2 === "stone",
+      movePlayer1 === "scissors" && movePlayer2 === "paper",
+    ].includes(true);
+
+    // WIN PLAYER2
+    const player2Wins = [
+      movePlayer2 === "stone" && movePlayer1 === "scissors",
+      movePlayer2 === "paper" && movePlayer1 === "stone",
+      movePlayer2 === "scissors" && movePlayer1 === "paper",
+    ].includes(true);
+
+    let gameResult;
+
+    if (player1Wins) {
+      gameResult = "player1";
+    } else if (player2Wins) {
+      gameResult = "player2";
+    } else {
+      gameResult = "tie";
     }
-    if (
-      (movePlayer1 == "scissors" && movePlayer2 == "scissors") ||
-      (movePlayer1 == "stone" && movePlayer2 == "stone") ||
-      (movePlayer1 == "paper" && movePlayer2 == "paper")
-    ) {
-      cs.whoWins = "tie";
-    }
-    console.log("score p1,", scorePlayer1);
-    // WIN PLAYER 2
-    let scorePlayer2 = cs.history.player2;
-    if (
-      (movePlayer2 == "scissor" && movePlayer1 == "paper") ||
-      (movePlayer2 == "stone" && movePlayer1 == "scissor") ||
-      (movePlayer2 == "paper" && movePlayer1 == "stone")
-    ) {
-      scorePlayer2++;
-      cs.whoWins = "player2";
-      this.changeScore();
-    }
-    console.log("score p2,", scorePlayer2);
+
+    return gameResult;
   },
 
   changeScore() {
     const cs = this.getState();
     const roomId = cs.roomId;
-    const scoreP1 = cs.history.player1;
-    const scoreP2 = cs.history.player2;
-    return fetch(`${API_BASE_URL}/rooms/score`, {
+    let scoreP1 = cs.history.player1;
+    let scoreP2 = cs.history.player2;
+
+    if (this.whoWins == "player1") {
+      scoreP1 += 1;
+    }
+    if (this.whoWins == "player2") {
+      scoreP2 += 1;
+    }
+    this.setState(cs);
+
+    fetch(`${API_BASE_URL}/rooms/score`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -334,6 +337,7 @@ const state = {
       })
       .then(res => {
         this.getScore();
+        console.log(res);
         return res;
       });
   },
@@ -355,7 +359,6 @@ const state = {
     for (const cb of this.listeners) {
       cb();
     }
-    localStorage.setItem("state", JSON.stringify(newState));
   },
   suscribe(callback: (any) => any) {
     this.listeners.push(callback);

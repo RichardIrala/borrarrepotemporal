@@ -33,10 +33,13 @@ class Results extends HTMLElement {
     this.shadow.appendChild(style);
   }
   addListeners() {
+    const cs = state.getState();
+
     const playAgain = this.shadow.querySelector("#playagain");
     playAgain.addEventListener("click", e => {
       state.start(false);
       state.changeMove("none");
+      cs.whoWins = null;
       Router.go("/instructions");
     });
     const backHome = this.shadow.querySelector("#backhome");
@@ -61,7 +64,8 @@ class Results extends HTMLElement {
     const actualName = cs.name;
     const player1 = cs.rtdbData.player1.userName;
     const player2 = cs.rtdbData.player2.userName;
-    let whoWins = cs.whoWins;
+    let whoWins = state.whoWins();
+    // state.changeScore();
 
     let image;
 
