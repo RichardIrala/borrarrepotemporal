@@ -256,9 +256,9 @@ app.put("/rooms/:id/player/move", (req, res) => {
 
 const relativeRoute = path.resolve(__dirname, "../dist");
 
-app.use(express.static("dist"));
+app.use(express.static(relativeRoute));
 app.get("*", (req, res) => {
-  res.sendFile(relativeRoute, +"/index.html");
+  res.sendFile(relativeRoute, +"./index.html");
 });
 
 app.listen(port, () => {
