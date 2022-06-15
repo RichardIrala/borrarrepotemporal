@@ -36,11 +36,13 @@ class Results extends HTMLElement {
     const playAgain = this.shadow.querySelector("#playagain");
     playAgain.addEventListener("click", e => {
       state.start(false);
+      state.changeMove("none");
       Router.go("/instructions");
     });
     const backHome = this.shadow.querySelector("#backhome");
     backHome.addEventListener("click", e => {
       state.start(false);
+      state.changeMove("none");
       Router.go("/select");
     });
   }

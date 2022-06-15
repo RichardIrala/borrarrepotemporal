@@ -273,8 +273,6 @@ const state = {
       body: JSON.stringify({ moveChoise: movePlayer, player }),
     })
       .then(data => {
-        if (player == "player1") cs.choiseP1 = true;
-        if (player == "player2") cs.choiseP2 = true;
         return data.json();
       })
       .then(res => {
@@ -295,6 +293,7 @@ const state = {
     ) {
       scorePlayer1++;
       cs.whoWins = "player1";
+      this.changeScore();
     }
     if (
       (movePlayer1 == "scissors" && movePlayer2 == "scissors") ||
@@ -313,12 +312,12 @@ const state = {
     ) {
       scorePlayer2++;
       cs.whoWins = "player2";
+      this.changeScore();
     }
     console.log("score p2,", scorePlayer2);
   },
 
   changeScore() {
-    this.whoWins();
     const cs = this.getState();
     const roomId = cs.roomId;
     const scoreP1 = cs.history.player1;

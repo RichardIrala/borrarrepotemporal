@@ -62,60 +62,6 @@ class Game extends HTMLElement {
     const handScissorsBottom = this.shadow.querySelector(".scissors__bottom");
     const handPaperBottom = this.shadow.querySelector(".paper__bottom");
 
-    function activeHands(hand) {
-      if (hand === "scissors") {
-        handScissorsBottom.classList.remove("disabled");
-        handScissorsBottom.classList.add("actived");
-        handstoneBottom.classList.add("hand-display-none");
-        handPaperBottom.classList.add("hand-display-none");
-      } else if (hand === "stone") {
-        handstoneBottom.classList.remove("disabled");
-        handstoneBottom.classList.add("actived");
-        handScissorsBottom.classList.add("hand-display-none");
-        handPaperBottom.classList.add("hand-display-none");
-      } else if (hand === "paper") {
-        handPaperBottom.classList.remove("disabled");
-        handPaperBottom.classList.add("actived");
-        handScissorsBottom.classList.add("hand-display-none");
-        handstoneBottom.classList.add("hand-display-none");
-      }
-      setTimeout(() => {
-        countdownEl.remove();
-        state.whoWins();
-      }, 5000);
-    }
-
-    const cs = state.getState();
-    state.suscribe(() => {
-      const actualName = cs.name;
-      const namePlayer1 = cs.rtdbData.player1.userName;
-      const movePlayer1 = cs.rtdbData.player1.moveChoise;
-      const namePlayer2 = cs.rtdbData.player2.userName;
-      const movePlayer2 = cs.rtdbData.player2.moveChoise;
-      let opponent;
-
-      setTimeout(() => {
-        if (actualName === namePlayer1) opponent = movePlayer2;
-        if (actualName === namePlayer2) opponent = movePlayer1;
-
-        handsDiv.classList.add("active-hands");
-        handsTop.classList.add("actived-hands-top");
-
-        if (opponent == "scissors") {
-          handScissorsTop.classList.add("actived-hand-top");
-        }
-        if (opponent == "stone") {
-          handstoneTop.classList.add("actived-hand-top");
-        }
-        if (opponent == "paper") {
-          handPaperTop.classList.add("actived-hand-top");
-        }
-      }, 5000);
-    });
-    setTimeout(() => {
-      Router.go("/results");
-    }, 6000);
-
     for (const hand of handsBottom) {
       hand.addEventListener("click", () => {
         const type = hand.getAttribute("hand");
@@ -131,11 +77,90 @@ class Game extends HTMLElement {
           activeHands("paper");
         }
         setTimeout(() => {
-          state.whoWins();
-
           clearInterval(countdown);
-        }, 4000);
+        }, 5000);
       });
+
+      function activeHands(hand) {
+        if (hand === "scissors") {
+          handScissorsBottom.classList.remove("disabled");
+          handScissorsBottom.classList.add("actived");
+          handstoneBottom.classList.add("hand-display-none");
+          handPaperBottom.classList.add("hand-display-none");
+        } else if (hand === "stone") {
+          handstoneBottom.classList.remove("disabled");
+          handstoneBottom.classList.add("actived");
+          handScissorsBottom.classList.add("hand-display-none");
+          handPaperBottom.classList.add("hand-display-none");
+        } else if (hand === "paper") {
+          handPaperBottom.classList.remove("disabled");
+          handPaperBottom.classList.add("actived");
+          handScissorsBottom.classList.add("hand-display-none");
+          handstoneBottom.classList.add("hand-display-none");
+        }
+        setTimeout(() => {
+          countdownEl.remove();
+        }, 5000);
+      }
+      setTimeout(() => {
+        const cs = state.getState();
+        const actualName = cs.name;
+        const namePlayer1 = cs.rtdbData.player1.userName;
+        const movePlayer1 = cs.rtdbData.player1.moveChoise;
+        const namePlayer2 = cs.rtdbData.player2.userName;
+        const movePlayer2 = cs.rtdbData.player2.moveChoise;
+
+        let opponent;
+        if (actualName === namePlayer1) opponent = movePlayer2;
+        if (actualName === namePlayer2) opponent = movePlayer1;
+        handsDiv.classList.add("active-hands");
+        handsTop.classList.add("actived-hands-top");
+
+        if (opponent == "scissors") {
+          handScissorsTop.classList.add("actived-hand-top");
+        }
+        if (opponent == "stone") {
+          handstoneTop.classList.add("actived-hand-top");
+        }
+        if (opponent == "paper") {
+          handPaperTop.classList.add("actived-hand-top");
+        }
+      }, 6000);
+
+      setTimeout(() => {
+        state.whoWins();
+        console.log("se ejecuta mas de una vez?");
+
+        Router.go("/results");
+      }, 9000);
+
+      // const cs = state.getState();
+      // state.suscribe(() => {
+      //   const actualName = cs.name;
+      //   const namePlayer1 = cs.rtdbData.player1.userName;
+      //   const movePlayer1 = cs.rtdbData.player1.moveChoise;
+      //   const namePlayer2 = cs.rtdbData.player2.userName;
+      //   const movePlayer2 = cs.rtdbData.player2.moveChoise;
+      // let opponent;
+
+      //   setTimeout(() => {
+      //     if (actualName === namePlayer1) opponent = movePlayer2;
+      //     if (actualName === namePlayer2) opponent = movePlayer1;
+
+      // handsDiv.classList.add("active-hands");
+      // handsTop.classList.add("actived-hands-top");
+
+      // if (opponent == "scissors") {
+      //   handScissorsTop.classList.add("actived-hand-top");
+      // }
+      // if (opponent == "stone") {
+      //   handstoneTop.classList.add("actived-hand-top");
+      // }
+      // if (opponent == "paper") {
+      //   handPaperTop.classList.add("actived-hand-top");
+      // }
+      //   }, 5000);
+      // });
     }
   }
 
@@ -154,7 +179,6 @@ class Game extends HTMLElement {
     </div>
 
     <div class="master-circle">${this.counter}</div>
-    
     
     <div class="container__hand">
       <hands-comp hand="stone" class="stone__bottom disabled"></hands-comp>
