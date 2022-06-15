@@ -39,7 +39,6 @@ class Results extends HTMLElement {
     playAgain.addEventListener("click", e => {
       state.start(false);
       state.changeMove("none");
-      cs.whoWins = null;
       Router.go("/instructions");
     });
     const backHome = this.shadow.querySelector("#backhome");

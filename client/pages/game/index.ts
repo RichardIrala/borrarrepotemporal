@@ -106,9 +106,9 @@ class Game extends HTMLElement {
         const cs = state.getState();
         const actualName = cs.name;
         const namePlayer1 = cs.rtdbData.player1.userName;
-        const movePlayer1 = cs.rtdbData.player1.moveChoise;
+        let movePlayer1 = cs.rtdbData.player1.moveChoise;
         const namePlayer2 = cs.rtdbData.player2.userName;
-        const movePlayer2 = cs.rtdbData.player2.moveChoise;
+        let movePlayer2 = cs.rtdbData.player2.moveChoise;
 
         let opponent;
         if (actualName === namePlayer1) opponent = movePlayer2;
@@ -128,8 +128,17 @@ class Game extends HTMLElement {
       }, 6000);
 
       setTimeout(() => {
-        console.log("se ejecuta mas de una vez?");
-        Router.go("/results");
+        const cs = state.getState();
+        const movePlayer1 = cs.rtdbData.player1.moveChoise;
+        const movePlayer2 = cs.rtdbData.player2.moveChoise;
+
+        if (movePlayer1 == "none" || movePlayer2 == "none") {
+          state.start(false);
+          state.changeMove("none");
+          Router.go("/instructions");
+        } else {
+          Router.go("/results");
+        }
       }, 9000);
 
       // const cs = state.getState();

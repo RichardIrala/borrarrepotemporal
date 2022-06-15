@@ -283,6 +283,8 @@ const state = {
     const cs = this.getState();
     const movePlayer1 = cs.rtdbData.player1.moveChoise;
     const movePlayer2 = cs.rtdbData.player2.moveChoise;
+    let scoreP1 = cs.history.player1;
+    let scoreP2 = cs.history.player2;
 
     // WIN PLAYER1
     const player1Wins = [
@@ -301,9 +303,11 @@ const state = {
     let gameResult;
 
     if (player1Wins) {
-      gameResult = "player1";
+      scoreP1 += 1;
+      return (gameResult = "player1");
     } else if (player2Wins) {
-      gameResult = "player2";
+      scoreP2 += 1;
+      return (gameResult = "player2");
     } else {
       gameResult = "tie";
     }
@@ -316,14 +320,6 @@ const state = {
     const roomId = cs.roomId;
     let scoreP1 = cs.history.player1;
     let scoreP2 = cs.history.player2;
-
-    if (this.whoWins == "player1") {
-      scoreP1 += 1;
-    }
-    if (this.whoWins == "player2") {
-      scoreP2 += 1;
-    }
-    this.setState(cs);
 
     fetch(`${API_BASE_URL}/rooms/score`, {
       method: "PUT",
