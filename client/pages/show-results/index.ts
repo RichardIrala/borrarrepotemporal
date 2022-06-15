@@ -45,6 +45,7 @@ class Results extends HTMLElement {
     backHome.addEventListener("click", e => {
       state.start(false);
       state.changeMove("none");
+      state.changeOnlineStatus(false);
       Router.go("/select");
     });
   }
@@ -63,7 +64,7 @@ class Results extends HTMLElement {
     const actualName = cs.name;
     const player1 = cs.rtdbData.player1.userName;
     const player2 = cs.rtdbData.player2.userName;
-    let whoWins = state.whoWins();
+    let whoWins = cs.whoWins;
     // state.changeScore();
 
     let image;
@@ -94,10 +95,10 @@ class Results extends HTMLElement {
       </div>
       <div class="board">
         <div>
-          <h3>Score</h3>
+          <text-custom size="25px" weight="bold">Score</text-custom>
         </div>
-        <text-custom size="20px" weight="bold">${player1}: ${cs.history.player1}</text-custom>
-        <text-custom size="20px" weight="bold">${player2}: ${cs.history.player2}</text-custom>
+        <text-custom size="25px" weight="bold">${player1}: ${cs.history.player1}</text-custom>
+        <text-custom size="25px" weight="bold">${player2}: ${cs.history.player2}</text-custom>
       </div>
 
       <btn-comp id="playagain" class="button">Volver a Jugar</btn-comp>

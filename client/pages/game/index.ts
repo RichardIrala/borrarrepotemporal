@@ -100,7 +100,7 @@ class Game extends HTMLElement {
         }
         setTimeout(() => {
           countdownEl.remove();
-        }, 5000);
+        }, 4500);
       }
       setTimeout(() => {
         const cs = state.getState();
@@ -137,9 +137,11 @@ class Game extends HTMLElement {
           state.changeMove("none");
           Router.go("/instructions");
         } else {
-          Router.go("/results");
+          state.whoWins(() => {
+            Router.go("/results");
+          });
         }
-      }, 9000);
+      }, 7500);
 
       // const cs = state.getState();
       // state.suscribe(() => {

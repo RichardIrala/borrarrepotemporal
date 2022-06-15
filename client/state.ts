@@ -243,6 +243,26 @@ const state = {
         });
     }
   },
+  changeOnlineStatus(status: boolean, callback?) {
+    const cs = this.getState();
+    const player = this.checkPlayer();
+    if (cs.name) {
+      fetch(`${API_BASE_URL}/rooms/user/status/${cs.rtdbRoomId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ player, onlineStatus: status }),
+      })
+        .then(data => {
+          return data.json();
+        })
+        .then(res => {
+          if (callback) callback();
+          return res;
+        });
+    }
+  },
 
   start(status) {
     const cs = this.getState();
@@ -279,7 +299,7 @@ const state = {
         return res;
       });
   },
-  whoWins() {
+  whoWins(callback) {
     const cs = this.getState();
     const movePlayer1 = cs.rtdbData.player1.moveChoise;
     const movePlayer2 = cs.rtdbData.player2.moveChoise;
@@ -300,26 +320,26 @@ const state = {
       movePlayer2 === "scissors" && movePlayer1 === "paper",
     ].includes(true);
 
-    let gameResult;
-
     if (player1Wins) {
-      scoreP1 += 1;
-      return (gameResult = "player1");
+      scoreP1++;
+      cs.whoWins = "player1";
+      this.changeScore(callback, scoreP1++, scoreP2);
     } else if (player2Wins) {
-      scoreP2 += 1;
-      return (gameResult = "player2");
+      scoreP2++;
+      cs.whoWins = "player2";
+      this.changeScore(callback, scoreP1, scoreP2++);
     } else {
-      gameResult = "tie";
+      cs.whoWins = "tie";
+      this.changeScore(callback, scoreP1, scoreP2);
     }
-
-    return gameResult;
+    this.setState(cs);
   },
 
-  changeScore() {
+  changeScore(callback, scoreP1, scoreP2) {
     const cs = this.getState();
     const roomId = cs.roomId;
-    let scoreP1 = cs.history.player1;
-    let scoreP2 = cs.history.player2;
+    // let scoreP1 = cs.history.player1;
+    // let scoreP2 = cs.history.player2;
 
     fetch(`${API_BASE_URL}/rooms/score`, {
       method: "PUT",
@@ -332,13 +352,13 @@ const state = {
         return data.json();
       })
       .then(res => {
-        this.getScore();
-        console.log(res);
+        this.getScore(callback);
         return res;
       });
   },
-  getScore() {
+  getScore(callback) {
     const cs = this.getState();
+    const history = cs.history;
     if (cs.roomId && cs.userId) {
       fetch(`${API_BASE_URL}/rooms/${cs.roomId}?userId=${cs.userId}`)
         .then(data => {
@@ -346,6 +366,10 @@ const state = {
         })
         .then(res => {
           console.log(res);
+          history.player1 = res.scorePlayer1;
+          history.player2 = res.scorePlayer2;
+          this.setState(cs);
+          callback();
         });
     }
   },

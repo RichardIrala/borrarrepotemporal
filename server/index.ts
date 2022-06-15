@@ -208,6 +208,21 @@ app.put("/rooms/user/:id", (req, res) => {
     }
   );
 });
+// CHANGE ONLINE STATUS
+app.put("/rooms/user/status/:id", (req, res) => {
+  const { player, onlineStatus } = req.body;
+  const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}/${player}`);
+  chatRoomRef.update(
+    {
+      online: onlineStatus,
+    },
+    () => {
+      res.status(200).json({
+        message: `${player} has changed the onlineStatus:${onlineStatus}`,
+      });
+    }
+  );
+});
 
 // CHANGE THE START
 app.put("/rooms/:id/player/start", (req, res) => {
