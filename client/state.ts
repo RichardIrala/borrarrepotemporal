@@ -1,7 +1,7 @@
 import { rtdb } from "./rtdb";
 import { map } from "lodash";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://piedra-papel-tijeras-online-df.herokuapp.com";
 
 //TODO: Validar quien es la persona ganadora y sumar el punto en base a eso
 
