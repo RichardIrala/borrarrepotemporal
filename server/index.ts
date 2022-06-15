@@ -8,8 +8,6 @@ import { nanoid } from "nanoid";
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
-app.use(express.static("dist"));
-
 app.use(cors());
 
 app.get("/env", (req, res) => {
@@ -258,6 +256,7 @@ app.put("/rooms/:id/player/move", (req, res) => {
 
 const relativeRoute = path.resolve(__dirname, "../dist");
 
+app.use(express.static("dist"));
 app.get("*", (req, res) => {
   res.sendFile(relativeRoute, +"/index.html");
 });
