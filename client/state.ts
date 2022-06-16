@@ -118,26 +118,7 @@ const state = {
     }
   },
   createRoom(callback?) {
-    const cs = this.getState();
-    if (cs.userId) {
-      fetch(`${API_BASE_URL}/rooms`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: cs.userId, userName: cs.name }),
-      })
-        .then((data) => {
-          return data.json();
-        })
-        .then((res) => {
-          if (cs.roomId == null) {
-            cs.roomId = res.id.toString();
-            this.setState(cs);
-            this.connectToRoom(callback);
-          }
-        });
-    }
+    console.log("Hola");
   },
   authRoomId(roomIdInput) {
     const cs = this.getState();
