@@ -15,8 +15,8 @@ const universalRoute = path.resolve(relativeRoute, "index.html");
 console.log(relativeRoute);
 app.use(express.static(relativeRoute));
 
-app.get("/hola", (req, res) => {
-  res.json({ a: "se" });
+app.get("/", (req, res) => {
+  res.sendFile("../dist/index.html");
 });
 app.get("/env", (req, res) => {
   console.log("envBNuscadodas");
