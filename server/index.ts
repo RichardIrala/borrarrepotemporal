@@ -99,54 +99,15 @@ app.put("/rooms/player2", (req, res) => {
 app.post("/rooms", (req, res) => {
   const { userId, userName } = req.body;
 
-  userColl
-    .doc(userId.toString())
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        const idRandom = nanoid();
-        const roomRef = rtdb.ref("/rooms/" + idRandom);
-        roomRef
-          .set({
-            player1: {
-              userName,
-              moveChoise: "none",
-              start: false,
-              online: true,
-            },
-            player2: {
-              userName: false,
-              moveChoise: "none",
-              start: false,
-              online: false,
-            },
-          })
-          .then(() => {
-            res.json({ d: "a" });
-          });
-        // .then(() => {
-        //   const roomLongId = roomRef.key;
-        //   const roomId = 1000 + Math.floor(Math.random() * 999);
-        //   roomsColl
-        //     .doc(roomId.toString())
-        //     .set({
-        //       rtdbId: roomLongId,
-        //       player1: userName,
-        //       scorePlayer1: 0,
-        //       scorePlayer2: 0,
-        //     })
-        //     .then(() => {
-        //       res.status(200).json({
-        //         id: roomId,
-        //       });
-        //     });
-        // });
-      } else {
-        res.status(401).json({
-          message: "El usuario no existe.",
-        });
-      }
+  if (userId) {
+    res.status(200).json({
+      id: "31232",
     });
+  } else {
+    res.status(401).json({
+      message: "El usuario no existe.",
+    });
+  }
 });
 app.put("/rooms/score", (req, res) => {
   const { id, player1, player2 } = req.body;
