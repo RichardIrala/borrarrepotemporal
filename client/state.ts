@@ -120,7 +120,7 @@ const state = {
   createRoom(callback?) {
     const cs = this.getState();
     if (cs.userId) {
-      fetch(`${API_BASE_URL}/rooms`, {
+      fetch(`/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
