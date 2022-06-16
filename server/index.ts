@@ -96,7 +96,7 @@ app.put("/rooms/player2", (req, res) => {
 // Y DENTRO DE ESE DOCUMENTO GUARDAMOS: EL ID LARGO DE LA RTDB
 // ESTO NOS VA A SERVIR PARA QUE LUEGO DESDE FIRESTORE AL OBTENER EL RTDBID QUE HAY DENTRO DE n SALA
 // CON ESE RTDBID OBTENDREMOS EL PROPIETARIO DE LA SALA EN LA RTDB, ES DECIR, EL USERID DE LA USERSCOLL EN FIRESTORE
-app.post("/roomssss", (req, res) => {
+app.post("/rooms", (req, res) => {
   const { userId, userName } = req.body;
 
   userColl
@@ -104,7 +104,9 @@ app.post("/roomssss", (req, res) => {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        console.log("hdsjahdjsahdj");
+        res.status(401).json({
+          id: "222",
+        });
       } else {
         res.status(401).json({
           message: "El usuario no existe.",
