@@ -14,7 +14,6 @@ const relativeRoute = path.resolve(__dirname, "../dist");
 const universalRoute = path.resolve(relativeRoute, "index.html");
 console.log(relativeRoute);
 app.use(express.static(relativeRoute));
-console.log(relativeRoute + "/index.html");
 
 app.get("/hola", (req, res) => {
   res.json({ a: "se" });
