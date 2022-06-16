@@ -100,7 +100,7 @@ app.post("/rooms", (req, res) => {
   const { userId, userName } = req.body;
 
   userColl
-    .doc(userId.toString())
+    .doc()
     .get()
     .then((doc) => {
       if (doc.exists) {
