@@ -100,7 +100,7 @@ app.post("/rooms", (req, res) => {
   const { userId, userName } = req.body;
 
   userColl
-    .doc()
+    .doc(userId.toString())
     .get()
     .then((doc) => {
       if (doc.exists) {
@@ -114,14 +114,24 @@ app.post("/rooms", (req, res) => {
               start: false,
               online: true,
             },
-            player2: {
-              userName: false,
-              moveChoise: "none",
-              start: false,
-              online: false,
-            },
           })
-          .then(() => {});
+          .then(() => {
+            const roomLongId = roomRef.key;
+            const roomId = 1000 + Math.floor(Math.random() * 999);
+            roomsColl
+              .doc(roomId.toString())
+              .set({
+                rtdbId: roomLongId,
+                player1: userName,
+                scorePlayer1: 0,
+                scorePlayer2: 0,
+              })
+              .then(() => {
+                res.status(200).json({
+                  id: roomId,
+                });
+              });
+          });
       } else {
         res.status(401).json({
           message: "El usuario no existe.",
