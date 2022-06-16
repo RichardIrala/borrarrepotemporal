@@ -109,10 +109,7 @@ app.post("/rooms", (req, res) => {
         roomRef.set({
           player1: "dsadsadsa",
         });
-      } else {
-        res.status(401).json({
-          message: "El usuario no existe.",
-        });
+        res.json({ a: "si" });
       }
     });
 });
