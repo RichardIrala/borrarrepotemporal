@@ -104,17 +104,7 @@ app.post("/roomssss", (req, res) => {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        const roomRef = rtdb.ref("rooms/" + nanoid());
-        roomRef
-          .set({
-            messages: [],
-            owner: userId,
-          })
-          .then(() => {
-            res.json({
-              id: "dsadsa",
-            });
-          });
+        console.log("hdsjahdjsahdj");
       } else {
         res.status(401).json({
           message: "El usuario no existe.",
