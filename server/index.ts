@@ -121,23 +121,7 @@ app.post("/rooms", (req, res) => {
               online: false,
             },
           })
-          .then(() => {
-            const roomLongId = roomRef.key;
-            const roomId = 1000 + Math.floor(Math.random() * 999);
-            roomsColl
-              .doc(roomId.toString())
-              .set({
-                rtdbId: roomLongId,
-                player1: userName,
-                scorePlayer1: 0,
-                scorePlayer2: 0,
-              })
-              .then(() => {
-                res.status(200).json({
-                  id: roomId,
-                });
-              });
-          });
+          .then(() => {});
       } else {
         res.status(401).json({
           message: "El usuario no existe.",
