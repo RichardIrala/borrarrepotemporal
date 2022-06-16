@@ -1,6 +1,6 @@
 import { rtdb } from "./rtdb";
 
-const API_BASE_URL = "https://piedra-papel-tijeras-online-df.herokuapp.com";
+const API_BASE_URL = "";
 
 const state = {
   data: {
@@ -91,15 +91,15 @@ const state = {
         },
         body: JSON.stringify({ name: cs.name }),
       })
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           cs.userId = res.id;
           this.setState(cs);
 
           if (idRoomInput) {
-            this.authRoomId(idRoomInput).then(data => {
+            this.authRoomId(idRoomInput).then((data) => {
               if (!data.id) {
                 return alert(data);
               } else {
@@ -127,10 +127,10 @@ const state = {
         },
         body: JSON.stringify({ userId: cs.userId, userName: cs.name }),
       })
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           if (cs.roomId == null) {
             cs.roomId = res.id.toString();
             this.setState(cs);
@@ -149,10 +149,10 @@ const state = {
       },
       body: JSON.stringify({ id: roomIdInput }),
     })
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(res => {
+      .then((res) => {
         if (res.id) {
           cs.roomId = res.id;
           this.addP2ToRooms(cs.roomId);
@@ -171,10 +171,10 @@ const state = {
       },
       body: JSON.stringify({ id: roomIdInput, player2: cs.name }),
     })
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(res => {
+      .then((res) => {
         if (res.id) {
           return res.message;
         } else {
@@ -190,10 +190,10 @@ const state = {
     const cs = this.getState();
     if (cs.roomId && cs.userId) {
       fetch(`${API_BASE_URL}/rooms/${cs.roomId}?userId=${cs.userId}`)
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           cs.rtdbRoomId = res.rtdbId;
           this.setState(cs);
           this.listenRoom(callback);
@@ -204,7 +204,7 @@ const state = {
     const cs = this.getState();
     const chatRoomRef = rtdb.ref(`/rooms/${cs.rtdbRoomId}`);
 
-    chatRoomRef.on("value", snapshot => {
+    chatRoomRef.on("value", (snapshot) => {
       const currentState = this.getState();
       const value = snapshot.val();
       currentState.rtdbData = value;
@@ -228,10 +228,10 @@ const state = {
         },
         body: JSON.stringify({ name }),
       })
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           if (callback) callback();
           return res;
         });
@@ -248,10 +248,10 @@ const state = {
         },
         body: JSON.stringify({ player, onlineStatus: status }),
       })
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           if (callback) callback();
           return res;
         });
@@ -269,10 +269,10 @@ const state = {
       },
       body: JSON.stringify({ start: status, player }),
     })
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(res => res);
+      .then((res) => res);
   },
 
   changeMove(movePlayer) {
@@ -286,10 +286,10 @@ const state = {
       },
       body: JSON.stringify({ moveChoise: movePlayer, player }),
     })
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(res => {
+      .then((res) => {
         return res;
       });
   },
@@ -342,10 +342,10 @@ const state = {
       },
       body: JSON.stringify({ id: roomId, player1: scoreP1, player2: scoreP2 }),
     })
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(res => {
+      .then((res) => {
         this.getScore(callback);
         return res;
       });
@@ -355,10 +355,10 @@ const state = {
     const history = cs.history;
     if (cs.roomId && cs.userId) {
       fetch(`${API_BASE_URL}/rooms/${cs.roomId}?userId=${cs.userId}`)
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(res => {
+        .then((res) => {
           history.player1 = res.scorePlayer1;
           history.player2 = res.scorePlayer2;
           this.setState(cs);

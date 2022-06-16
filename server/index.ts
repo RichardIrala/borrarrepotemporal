@@ -9,10 +9,20 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
+console.log(__dirname);
+const relativeRoute = path.resolve(__dirname, "../dist");
+const universalRoute = path.resolve(relativeRoute, "index.html");
+console.log(relativeRoute);
+app.use(express.static(relativeRoute));
+console.log(relativeRoute + "/index.html");
 
+app.get("/hola", (req, res) => {
+  res.json({ a: "se" });
+});
 app.get("/env", (req, res) => {
+  console.log("envBNuscadodas");
   res.json({
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV || "development",
   });
 });
 
@@ -27,13 +37,13 @@ app.post("/signup", (req, res) => {
   userColl
     .where("name", "==", name)
     .get()
-    .then(snap => {
+    .then((snap) => {
       if (snap.empty) {
         userColl
           .add({
             name: name,
           })
-          .then(newUserDoc => {
+          .then((newUserDoc) => {
             res.status(201).json({
               id: newUserDoc.id,
               new: true,
@@ -53,7 +63,7 @@ app.post("/auth/rooms", (req, res) => {
   roomsColl
     .doc(id.toString())
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (doc.exists) {
         res.status(200).json({
           id: doc.id,
@@ -72,7 +82,7 @@ app.put("/rooms/player2", (req, res) => {
   roomsColl
     .doc(id.toString())
     .update("player2", player2)
-    .then(doc => {
+    .then((doc) => {
       if (doc.writeTime) {
         res.status(200).json({
           id: id,
@@ -96,7 +106,7 @@ app.post("/rooms", (req, res) => {
   userColl
     .doc(userId.toString())
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (doc.exists) {
         const roomRef = rtdb.ref("/rooms/" + nanoid());
         roomRef
@@ -147,7 +157,7 @@ app.put("/rooms/score", (req, res) => {
       scorePlayer1: player1,
       scorePlayer2: player2,
     })
-    .then(doc => {
+    .then((doc) => {
       if (doc.writeTime) {
         res.status(200).json({
           id: id,
@@ -165,12 +175,12 @@ app.get("/rooms/:roomId", (req, res) => {
   userColl
     .doc(userId.toString())
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (doc.exists) {
         roomsColl
           .doc(roomId)
           .get()
-          .then(snap => {
+          .then((snap) => {
             const data = snap.data();
             res.status(200).json(data);
           });
@@ -185,7 +195,7 @@ app.get("/rooms/:roomId", (req, res) => {
 // LISTENING ROOM
 app.get("/rooms/data/:id", (req, res) => {
   const chatRoomRef = rtdb.ref(`/rooms/${req.params.id}`);
-  chatRoomRef.on("value", snap => {
+  chatRoomRef.on("value", (snap) => {
     res.status(200).json(snap.val());
   });
 });
@@ -254,12 +264,9 @@ app.put("/rooms/:id/player/move", (req, res) => {
   );
 });
 
-const relativeRoute = path.resolve(__dirname, "../dist");
-
-app.use(express.static(relativeRoute));
-app.get("*", (req, res) => {
-  res.sendFile(relativeRoute, +"/index.html");
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(universalRoute);
+// });
 
 app.listen(port, () => {
   console.log(`listen the port: ${port}`);
