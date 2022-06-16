@@ -1,6 +1,6 @@
 import { rtdb } from "./rtdb";
 
-const API_BASE_URL = "https://piedra-papel-tijeras-online-df.herokuapp.com";
+const API_BASE_URL = "";
 
 const state = {
   data: {
@@ -84,7 +84,7 @@ const state = {
   createUser(callback?, idRoomInput?) {
     const cs = this.getState();
     if (cs.name) {
-      fetch(`${API_BASE_URL}/signup`, {
+      fetch(`/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
